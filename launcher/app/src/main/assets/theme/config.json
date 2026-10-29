@@ -1,0 +1,16 @@
+{
+  "wallpaper": true,
+  "wallpaper_rotation_minutes": 10,
+  "wallpaper_order": "sequential",
+  "dock_opacity": 70,
+  "app_glow": true,
+  "stock_home_redirect": "com.mitv.tvhome",
+  "restore_key_services": true,
+  "key_filter": true,
+  "lunar_date": true,
+  "lunar_utc_offset": 8,
+  "app_keys": [
+    "KEYCODE_HOME:com.bytv.launcher",
+    "KEYCODE_ALL_APPS:com.bytv.launcher"
+  ]
+}

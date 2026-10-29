@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="weather_loading">Ganzhou · Updating weather…</string>
+    <string name="weather_unavailable">Weather unavailable · Retrying later</string>
+    <string name="weather_format">%1$s　%2$s　%3$d°C</string>
+    <string name="weather_cached"> · Updated %1$s</string>
+    <string-array name="weather_conditions">
+        <item>Clear</item><item>Partly cloudy</item><item>Overcast</item><item>Fog</item>
+        <item>Drizzle</item><item>Light rain</item><item>Rain</item><item>Heavy rain</item>
+        <item>Freezing rain</item><item>Snow</item><item>Thunderstorms</item><item>Weather</item>
+    </string-array>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The rounded outline a tile's artwork is clipped to: transparent fill, 22% corners. Used as the tile icon's
+     and banner's background so ViewOutlineProvider.BACKGROUND can describe a rounded rect. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#00000000" />
+    <corners android:radius="22dp" />
+</shape>

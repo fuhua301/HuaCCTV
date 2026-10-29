@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="weather_loading">赣州 · 正在更新天气…</string>
+    <string name="weather_unavailable">赣州 · 天气暂不可用，稍后重试</string>
+    <string name="weather_format">%1$s　%2$s　%3$d°C</string>
+    <string name="weather_cached"> · 上次更新 %1$s</string>
+    <string-array name="weather_conditions">
+        <item>晴</item><item>多云</item><item>阴</item><item>雾</item>
+        <item>毛毛雨</item><item>小雨</item><item>中雨</item><item>大雨</item>
+        <item>冻雨</item><item>雪</item><item>雷雨</item><item>天气</item>
+    </string-array>
+</resources>
