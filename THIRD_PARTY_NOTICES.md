@@ -6,4 +6,4 @@
 - AndroidX RecyclerView / DynamicAnimation：Android Open Source Project，Apache License 2.0，由 Gradle 获取。
 - Gradle Wrapper：Gradle 项目，Apache License 2.0，用于下载和运行项目声明的 Gradle 版本。
 
-截图中的第三方 APP 图标与壁纸属于相应权利人，仅用于说明实机界面。个人壁纸原图、Android SDK、JDK、构建缓存、签名私钥和设备网络配置不包含在本仓库中。
+截图中的第三方 APP 图标与壁纸属于相应权利人，仅用于说明实机界面。本仓库内置的 20 张壁纸由本项目用户提供；Android SDK、JDK、构建缓存、签名私钥和设备网络配置不包含在仓库中。

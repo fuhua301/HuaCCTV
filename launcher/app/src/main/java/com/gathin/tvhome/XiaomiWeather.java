@@ -7,11 +7,6 @@ import java.time.OffsetDateTime;
 
 /** Response contract used by the installed Xiaomi TWeather 2.5.18 client. */
 final class XiaomiWeather {
-    static final String ENDPOINT = "https://weatherapi.market.xiaomi.com/wtr-v3/weather/all?source=tweather"
-            + "&latitude=25.832943528026&longitude=114.71256136027&locationKey=weathercn%3A101240704"
-            + "&locale=zh_CN&isGlobal=false&alpha=true&appKey=tvweatherapp202211"
-            + "&sign=t1nsfdw0pwbijgjke2zk&romVersion=1&appVersion=1&device=mitv&modDevice=mitv_tweather";
-
     static final class Reading {
         final String title, details, forecast;
         final Day[] days;
@@ -40,7 +35,9 @@ final class XiaomiWeather {
         }
     }
 
-    static Reading parse(JSONObject body, long now) throws Exception {
+    static Reading parse(JSONObject body, long now) throws Exception { return parse(body, now, "天气"); }
+
+    static Reading parse(JSONObject body, long now, String place) throws Exception {
         JSONObject current = body.getJSONObject("current");
         double temperature = current.getJSONObject("temperature").getDouble("value");
         if (!Double.isFinite(temperature) || temperature < -60 || temperature > 65)
@@ -51,7 +48,7 @@ final class XiaomiWeather {
             throw new IllegalArgumentException("outdated observation");
         JSONObject daily = body.optJSONObject("forecastDaily");
         JSONObject range = item(daily, "temperature", 0);
-        String title = "赣州·南康  " + description(code) + "  " + Math.round(temperature) + "°C";
+        String title = place + "  " + description(code) + "  " + Math.round(temperature) + "°C";
         String details = range == null ? "" : range.optString("to") + "–" + range.optString("from") + "°C";
         details = append(details, value(current, "feelsLike", "体感 ", "°C"));
         details = append(details, value(current, "humidity", "湿度 ", "%"));

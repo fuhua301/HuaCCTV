@@ -11,15 +11,11 @@ android {
         applicationId providers.gradleProperty('launcherApplicationId').getOrElse('com.bytv.launcher')
         minSdk 26
         targetSdk 34
-        versionCode 32
-        versionName '5.1'
+        versionCode 37
+        versionName '5.6'
     }
 
-    // Wallpapers are installed separately to the TV's theme directory. Do not keep
-    // a second, immutable copy of the pictures inside the installed APK.
-    androidResources {
-        ignoreAssetsPattern = 'wallpapers'
-    }
+    // Twenty default wallpapers are bundled and seeded only once per filename.
 
     buildTypes {
         release {

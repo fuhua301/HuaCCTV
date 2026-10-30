@@ -17,6 +17,7 @@ final class WallpaperLanServer implements Closeable {
         void select(String name) throws Exception;
         void rotation(int minutes) throws Exception;
         byte[] thumbnail(String name) throws Exception;
+        default File original(String name) throws Exception { throw new IOException("原图暂不可用"); }
     }
     private final Store store;
     private final byte[] page;
@@ -63,6 +64,16 @@ final class WallpaperLanServer implements Closeable {
                 if ("GET".equals(request[0])) {
                     if (route.isEmpty()) reply(output, 200, "text/html", page);
                     else if (route.equals("list")) reply(output, 200, "application/json", bytes(store.list()));
+                    else if (route.equals("image")) {
+                        File image = store.original(query.get("name"));
+                        String extension = image.getName().toLowerCase(Locale.ROOT);
+                        String type = extension.endsWith(".png") ? "image/png" : extension.endsWith(".webp") ? "image/webp" : "image/jpeg";
+                        output.write(bytes("HTTP/1.1 200 OK\r\nContent-Type: " + type + "\r\nContent-Length: " + image.length()
+                                + "\r\nConnection: close\r\nCache-Control: no-store\r\nX-Content-Type-Options: nosniff\r\n\r\n"));
+                        try (InputStream file = new FileInputStream(image)) { byte[] buffer = new byte[32768]; int n;
+                            while ((n = file.read(buffer)) != -1) output.write(buffer, 0, n); }
+                        output.flush();
+                    }
                     else if (route.equals("thumb")) reply(output, 200, "image/jpeg", store.thumbnail(query.get("name")));
                     else reply(output, 404, "text/plain", bytes("页面不存在"));
                 } else if ("POST".equals(request[0])) {

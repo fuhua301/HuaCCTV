@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
 
 import javax.net.ssl.HttpsURLConnection;
 
-/** Fixed Ganzhou weather, with a small animated scene. No GPS or IP location requests. */
+/** Selected or IP-located city weather, cached with the location identity. */
 final class WeatherHeader {
     private static final long REFRESH_MS = 10 * 60 * 1000L;
     private static final long RETRY_MS = 5 * 60 * 1000L;
@@ -38,7 +38,8 @@ final class WeatherHeader {
         this.icon = panel.icon;
         TextView view = this.view;
         context = view.getContext().getApplicationContext();
-        cache = context.getSharedPreferences("weather_header_xiaomi_nankang", Context.MODE_PRIVATE);
+        cache = context.getSharedPreferences("weather_header_dynamic", Context.MODE_PRIVATE);
+        WeatherLocations.mode(context);
         render(false);
     }
 
@@ -65,7 +66,7 @@ final class WeatherHeader {
         if (!active || closed || loading) return;
         ui.removeCallbacks(refresh);
         long age = System.currentTimeMillis() - cache.getLong("updated", 0);
-        if (age >= 0 && age < REFRESH_MS && cache.contains("body")) {
+        if (age >= 0 && age < REFRESH_MS && cache.contains("body") && cacheMatches()) {
             render(false);
             ui.postDelayed(refresh, REFRESH_MS - age);
             return;
@@ -74,9 +75,12 @@ final class WeatherHeader {
         worker.execute(() -> {
             boolean success = false;
             try {
-                JSONObject body = get(XiaomiWeather.ENDPOINT);
-                XiaomiWeather.Reading reading = XiaomiWeather.parse(body, System.currentTimeMillis());
-                cache.edit().putString("body", body.toString()).putString("title", reading.title)
+                WeatherCity city = WeatherLocations.resolve(context);
+                String mode = WeatherLocations.mode(context);
+                JSONObject body = (JSONObject) WeatherLocations.get(city.endpoint());
+                XiaomiWeather.Reading reading = XiaomiWeather.parse(body, System.currentTimeMillis(), city.name);
+                cache.edit().putString("city_key", city.cacheKey()).putString("city_name", city.name).putString("mode", mode)
+                        .putString("body", body.toString()).putString("title", reading.title)
                         .putString("details", reading.details)
                         .putString("forecast", reading.forecast)
                         .putLong("observed", reading.observed)
@@ -100,13 +104,13 @@ final class WeatherHeader {
 
     private void render(boolean failed) {
         long updated = cache.getLong("updated", 0);
-        if (updated == 0 || !cache.contains("body")) {
+        if (updated == 0 || !cache.contains("body") || !cacheMatches()) {
             icon.setWeather(-1, true);
             view.setText(failed ? R.string.weather_unavailable : R.string.weather_loading);
             return;
         }
         try {
-            XiaomiWeather.Reading reading = XiaomiWeather.parse(new JSONObject(cache.getString("body", "{}")), System.currentTimeMillis());
+            XiaomiWeather.Reading reading = XiaomiWeather.parse(new JSONObject(cache.getString("body", "{}")), System.currentTimeMillis(), cache.getString("city_name", "天气"));
             long age = System.currentTimeMillis() - updated;
             panel.render(reading, failed || age < 0 || age >= REFRESH_MS
                     || System.currentTimeMillis() - reading.observed > 2 * 60 * 60 * 1000L);
@@ -131,26 +135,9 @@ final class WeatherHeader {
         return 11;
     }
 
-    private static JSONObject get(String address) throws Exception {
-        HttpsURLConnection connection = (HttpsURLConnection) new URL(address).openConnection();
-        connection.setConnectTimeout(8000);
-        connection.setReadTimeout(8000);
-        connection.setRequestProperty("Accept", "application/json");
-        connection.setRequestProperty("User-Agent", "CleanYourTV/3.4");
-        try {
-            if (connection.getResponseCode() != 200) throw new IllegalStateException("HTTP response");
-            try (InputStream input = connection.getInputStream(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-                byte[] buffer = new byte[4096];
-                int n;
-                while ((n = input.read(buffer)) != -1) {
-                    if (Thread.currentThread().isInterrupted()) throw new InterruptedException();
-                    if (out.size() + n > 262144) throw new IllegalStateException("Response too large");
-                    out.write(buffer, 0, n);
-                }
-                return new JSONObject(new String(out.toByteArray(), StandardCharsets.UTF_8));
-            }
-        } finally {
-            connection.disconnect();
-        }
+    private boolean cacheMatches() {
+        WeatherCity city = WeatherLocations.cached(context);
+        return city != null && WeatherLocations.mode(context).equals(cache.getString("mode", ""))
+                && city.cacheKey().equals(cache.getString("city_key", ""));
     }
 }

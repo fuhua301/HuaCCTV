@@ -87,6 +87,7 @@ final class WallpaperWebStore implements WallpaperLanServer.Store {
         context.getSharedPreferences(WallpaperPlayer.KEY_PREFS, Context.MODE_PRIVATE).edit().putInt(WallpaperPlayer.KEY_MINUTES, minutes).commit();
         changed();
     }
+    @Override public synchronized File original(String name) throws Exception { return find(name); }
     @Override public synchronized byte[] thumbnail(String name) throws Exception {
         File file = find(name); BitmapFactory.Options options = new BitmapFactory.Options(); options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(file.getPath(), options); options.inSampleSize = 1;

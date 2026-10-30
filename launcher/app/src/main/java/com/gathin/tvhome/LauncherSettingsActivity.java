@@ -21,6 +21,8 @@ public final class LauncherSettingsActivity extends Activity {
     static final String EXTRA_INPUTS = "com.gathin.tvhome.extra.INPUTS_FROM_SETTINGS";
     private SharedPreferences choices;
     private WallpaperLanServer wallpaperServer;
+    private final java.util.concurrent.ExecutorService weatherWorker = java.util.concurrent.Executors.newSingleThreadExecutor();
+    private int weatherSearchSerial;
     private LinearLayout body;
     private TextView breadcrumb, footer;
     private final ArrayList<Page> pages = new ArrayList<>();
@@ -82,6 +84,7 @@ public final class LauncherSettingsActivity extends Activity {
     }
     private void rootPage() {
         add("个性化", "布局、壁纸与动效  ›", () -> push("个性化", this::personal));
+        add("天气位置", weatherLocationLabel(), () -> push("天气位置", this::weatherLocationPage));
         add("开机启动", appLabel(), () -> push("开机启动 · 用户应用", this::startup));
         add("整理应用", "移动桌面图标  ›", () -> result(EXTRA_REORDER));
         add("投屏", "›", () -> open(SystemSettings.casting(this)));
@@ -91,6 +94,56 @@ public final class LauncherSettingsActivity extends Activity {
             add("确认恢复布局、壁纸与动效", "", this::reset);
         }));
     }
+    private String weatherLocationLabel() {
+        WeatherCity city = WeatherLocations.cached(this);
+        return (WeatherLocations.AUTO.equals(WeatherLocations.mode(this)) ? "自动 · " : "手动 · ")
+                + (city == null ? "待定位" : city.name) + "  ›";
+    }
+    private void weatherLocationPage() {
+        boolean automatic = WeatherLocations.AUTO.equals(WeatherLocations.mode(this));
+        add("自动定位城市", mark(automatic), () -> { WeatherLocations.automatic(this); changed(); refresh(); });
+        add("手动选择城市", !automatic ? "✓  ›" : "›", () -> push("搜索天气城市", this::weatherCitySearch));
+        WeatherCity city = WeatherLocations.cached(this);
+        TextView hint = ControlCenterUi.label(this, "当前：" + (city == null ? "返回桌面后获取位置" : city.name)
+                + "\n自动定位使用公网 IP，VPN 或网络出口可能影响定位；可手动搜索城市或区县。", 11);
+        hint.setPadding(dp(8), dp(12), dp(8), dp(8)); hint.setTextColor(0xCCFFFFFF); body.addView(hint);
+    }
+    private void weatherCitySearch() {
+        final int request = ++weatherSearchSerial;
+        WeatherCity saved = WeatherLocations.lastManual(this);
+        if (saved != null) add("使用 " + saved.name, "", () -> { WeatherLocations.manual(this, saved); changed(); back(); });
+        EditText input = new EditText(this); input.setSingleLine(true); input.setTextSize(14); input.setTextColor(0xFFFFFFFF);
+        input.setHintTextColor(0xAAFFFFFF); input.setHint("城市或区县，如：北京、深圳、南康");
+        input.setPadding(dp(12), dp(6), dp(12), dp(6)); input.setBackground(ControlCenterUi.round(this, 0x18FFFFFF, 12));
+        input.setInputType(android.text.InputType.TYPE_CLASS_TEXT); input.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH);
+        body.addView(input, new LinearLayout.LayoutParams(-1, dp(44)));
+        LinearLayout results = new LinearLayout(this); results.setOrientation(LinearLayout.VERTICAL);
+        Runnable search = () -> {
+            String query = input.getText().toString().trim();
+            android.view.inputmethod.InputMethodManager keyboard = getSystemService(android.view.inputmethod.InputMethodManager.class);
+            if (keyboard != null) keyboard.hideSoftInputFromWindow(input.getWindowToken(), 0);
+            results.removeAllViews(); results.addView(ControlCenterUi.label(this, "正在搜索…", 12));
+            weatherWorker.execute(() -> {
+                java.util.List<WeatherCity> cities = java.util.Collections.emptyList(); String problem = null;
+                try { cities = WeatherLocations.search(query); } catch (Exception unavailable) { problem = unavailable.getMessage(); }
+                final java.util.List<WeatherCity> found = cities; final String error = problem;
+                runOnUiThread(() -> {
+                    if (isFinishing() || isDestroyed() || request != weatherSearchSerial || pages.isEmpty()
+                            || !"搜索天气城市".equals(pages.get(pages.size()-1).title)) return;
+                    results.removeAllViews();
+                    if (found.isEmpty()) { results.addView(ControlCenterUi.label(this, error == null ? "没有找到城市，请尝试其他名称。" : "搜索失败：" + error, 12)); return; }
+                    for (WeatherCity city : found) {
+                        TextView row = ControlCenterUi.row(this, city.name, "", () -> { WeatherLocations.manual(this, city); changed(); back(); });
+                        LinearLayout.LayoutParams size = new LinearLayout.LayoutParams(-1, -2); size.bottomMargin = dp(4); results.addView(row, size);
+                    }
+                    if (results.getChildCount() > 0) results.getChildAt(0).requestFocus();
+                });
+            });
+        };
+        add("搜索", "", search); body.addView(results);
+        input.setOnEditorActionListener((v, action, event) -> { if (action == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) { search.run(); return true; } return false; });
+    }
+
     private void personal() {
         add("桌面布局", "›", () -> push("桌面布局", this::layout));
         add("壁纸与轮换", "›", () -> push("壁纸与轮换", this::wallpapers));
@@ -182,7 +235,7 @@ public final class LauncherSettingsActivity extends Activity {
     private void stopWallpaperServer() {
         if (wallpaperServer != null) { try { wallpaperServer.close(); } catch (java.io.IOException ignored) { } wallpaperServer = null; }
     }
-    @Override protected void onDestroy() { stopWallpaperServer(); super.onDestroy(); }
+    @Override protected void onDestroy() { weatherWorker.shutdownNow(); stopWallpaperServer(); super.onDestroy(); }
 
     private void wallpaperChoices() {
         String current = choices.getString(Config.WALLPAPER_CHOICE_KEY, null);

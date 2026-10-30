@@ -2,6 +2,7 @@ package com.gathin.tvhome;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -386,10 +387,17 @@ final class Config {
             if (names == null || names.length == 0) return;
             File wallpapers = new File(dir, "wallpapers");
             if (!wallpapers.isDirectory() && !wallpapers.mkdirs()) return;
+            SharedPreferences bundled = ctx.getSharedPreferences("bundled_wallpapers", Context.MODE_PRIVATE);
+            Set<String> installed = new HashSet<>(bundled.getStringSet("installed_names", Collections.emptySet()));
+            Set<String> before = new HashSet<>(installed);
             for (String name : names) {
+                if (!BundledWallpaperPolicy.validName(name)) continue;
                 File target = new File(wallpapers, name);
-                if (!target.isFile()) copyAsset(assets, "theme/wallpapers/" + name, target);
+                if (BundledWallpaperPolicy.shouldCopy(name, installed, target.isFile()))
+                    copyAsset(assets, "theme/wallpapers/" + name, target);
+                installed.add(name);
             }
+            if (!installed.equals(before)) bundled.edit().putStringSet("installed_names", installed).commit();
         } catch (IOException | RuntimeException e) {
             Log.w(TAG, "bundled theme not copied", e);
         }
