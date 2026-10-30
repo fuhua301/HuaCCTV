@@ -9,7 +9,7 @@ import java.io.*;
 import java.util.*;
 import javax.net.ssl.HttpsURLConnection;
 
-/** IP-based city discovery and Xiaomi city search. No GPS is requested. */
+/** Prefer the TV system location; use IP estimation only when no device position is available. */
 final class WeatherLocations {
     static final String AUTO = "auto", MANUAL = "manual";
     private static final String PREFS = "weather_locations";
@@ -23,9 +23,16 @@ final class WeatherLocations {
             SharedPreferences.Editor edit = prefs.edit().putString("mode", legacy ? MANUAL : AUTO);
             if (legacy) edit.putString("manual", json(NANKANG).toString()); edit.commit();
         }
+        if (prefs.getInt("resolver_version", 0) < 2) {
+            SharedPreferences.Editor edit = prefs.edit().putInt("resolver_version", 2);
+            if (AUTO.equals(prefs.getString("mode", AUTO))) edit.remove("automatic").remove("auto_updated")
+                    .remove("auto_source").remove("auto_device");
+            edit.commit();
+        }
         return prefs.getString("mode", AUTO);
     }
-    static void automatic(Context context) { prefs(context).edit().putString("mode", AUTO).remove("auto_updated").commit(); }
+    static void automatic(Context context) { prefs(context).edit().putString("mode", AUTO).remove("automatic")
+            .remove("auto_updated").remove("auto_source").remove("auto_device").commit(); }
     static void manual(Context context, WeatherCity city) { prefs(context).edit().putString("mode", MANUAL).putString("manual", json(city).toString()).commit(); }
     static WeatherCity cached(Context context) {
         boolean manual = MANUAL.equals(mode(context));
@@ -35,24 +42,66 @@ final class WeatherLocations {
     static WeatherCity lastManual(Context context) {
         try { return from(new JSONObject(prefs(context).getString("manual", "{}"))); } catch(Exception absent) { return null; }
     }
+    static String source(Context context) {
+        return MANUAL.equals(mode(context)) ? "手动选择" : prefs(context).getString("auto_source", "定位中");
+    }
+    private static WeatherCity readSystemCity(Context context) {
+        String[] keys = {"mitv_user_location", "mitv_location"};
+        WeatherCity fallback = null;
+        for (String key : keys) {
+            try {
+                String raw = android.provider.Settings.System.getString(context.getContentResolver(), key);
+                if (raw == null || raw.length() > 8192) continue;
+                JSONObject value = new JSONObject(raw);
+                double lat = value.getDouble("latitude"), lon = value.getDouble("longitude");
+                if (!WeatherAutoPolicy.validDeviceCoordinates(lat, lon)) continue;
+                String city = value.optString("city", "").trim(), district = value.optString("district", "").trim();
+                String label = city.isEmpty() ? district : district.isEmpty() || city.equals(district) ? city : city + "·" + district;
+                if (label.isEmpty()) label = "电视所在城市";
+                WeatherCity result = new WeatherCity(label, "", lat, lon);
+                if (key.equals("mitv_user_location")) {
+                    if (value.optBoolean("isUserSet", false)) return result;
+                    fallback = result;
+                } else return result;
+            } catch (Exception unavailable) { }
+        }
+        return fallback;
+    }
     static WeatherCity resolve(Context context) throws Exception {
         if (MANUAL.equals(mode(context))) return cached(context);
         SharedPreferences prefs = prefs(context); WeatherCity previous = cached(context);
+        WeatherCity device = readSystemCity(context);
+        String desiredSource = device == null ? "公网 IP 估算" : "电视系统定位";
+        String deviceKey = device == null ? "" : device.latitude + "," + device.longitude + "," + device.name;
         long age = System.currentTimeMillis() - prefs.getLong("auto_updated", 0);
-        if (previous != null && age >= 0 && age < 6 * 60 * 60 * 1000L) return previous;
+        if (WeatherAutoPolicy.useCache(previous != null, prefs.getString("auto_source", ""), desiredSource,
+                prefs.getString("auto_device", ""), deviceKey, age)) return previous;
+        if (device != null) {
+            WeatherCity city = geocode(device.latitude, device.longitude, device.name, true);
+            remember(prefs, city, desiredSource, deviceKey); return city;
+        }
         try {
             JSONObject ip;
             try { ip = (JSONObject) get("https://ipwho.is/"); if (!ip.optBoolean("success", true)) throw new IOException("IP 定位暂不可用"); }
             catch (Exception unavailable) { ip = (JSONObject) get("https://ipapi.co/json/"); }
-            double lat = ip.getDouble("latitude"), lon = ip.getDouble("longitude");
-            WeatherCity city;
-            try {
-                JSONArray result = (JSONArray) get("https://weatherapi.market.xiaomi.com/wtr-v3/location/city/geo?latitude=" + lat + "&longitude=" + lon + "&locale=zh_CN");
-                if (result.length() == 0) throw new IOException("未找到定位城市"); city = fromSearch(result.getJSONObject(0));
-            } catch (Exception noGeo) { city = new WeatherCity(ip.optString("city", "所在城市"), "", lat, lon); }
-            prefs.edit().putString("automatic", json(city).toString()).putLong("auto_updated", System.currentTimeMillis()).commit();
-            return city;
+            WeatherCity city = geocode(ip.getDouble("latitude"), ip.getDouble("longitude"), ip.optString("city", "所在城市"), false);
+            remember(prefs, city, desiredSource, deviceKey); return city;
         } catch (Exception unavailable) { if (previous != null) return previous; throw unavailable; }
+    }
+    private static WeatherCity geocode(double latitude, double longitude, String fallbackName, boolean preserveName) {
+        try {
+            JSONArray result = (JSONArray) get("https://weatherapi.market.xiaomi.com/wtr-v3/location/city/geo?latitude="
+                    + latitude + "&longitude=" + longitude + "&locale=zh_CN");
+            if (result.length() > 0) {
+                WeatherCity city = fromSearch(result.getJSONObject(0));
+                return new WeatherCity(preserveName ? fallbackName : city.name, city.key, latitude, longitude);
+            }
+        } catch (Exception unavailable) { }
+        return new WeatherCity(fallbackName, "", latitude, longitude);
+    }
+    private static void remember(SharedPreferences prefs, WeatherCity city, String source, String device) {
+        prefs.edit().putString("automatic", json(city).toString()).putString("auto_source", source).putString("auto_device", device)
+                .putLong("auto_updated", System.currentTimeMillis()).commit();
     }
     static List<WeatherCity> search(String query) throws Exception {
         if (query == null || query.trim().isEmpty() || query.length() > 60) throw new IOException("请输入城市或区县名称");
@@ -79,7 +128,7 @@ final class WeatherLocations {
     static Object get(String address) throws Exception {
         HttpsURLConnection connection = (HttpsURLConnection) new URL(address).openConnection();
         connection.setConnectTimeout(8000); connection.setReadTimeout(10000); connection.setRequestProperty("Accept", "application/json");
-        connection.setRequestProperty("User-Agent", "HuaCCTV/5.6");
+        connection.setRequestProperty("User-Agent", "HuaCCTV/5.7");
         try {
             if (connection.getResponseCode() != 200) throw new IOException("网络服务暂不可用");
             try (InputStream input = connection.getInputStream(); ByteArrayOutputStream output = new ByteArrayOutputStream()) {

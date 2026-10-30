@@ -105,7 +105,8 @@ public final class LauncherSettingsActivity extends Activity {
         add("手动选择城市", !automatic ? "✓  ›" : "›", () -> push("搜索天气城市", this::weatherCitySearch));
         WeatherCity city = WeatherLocations.cached(this);
         TextView hint = ControlCenterUi.label(this, "当前：" + (city == null ? "返回桌面后获取位置" : city.name)
-                + "\n自动定位使用公网 IP，VPN 或网络出口可能影响定位；可手动搜索城市或区县。", 11);
+                + "\n定位来源：" + WeatherLocations.source(this)
+                + "\n优先使用电视系统位置；系统未提供时才使用公网 IP 估算。地址有误时可手动选择。", 11);
         hint.setPadding(dp(8), dp(12), dp(8), dp(8)); hint.setTextColor(0xCCFFFFFF); body.addView(hint);
     }
     private void weatherCitySearch() {
