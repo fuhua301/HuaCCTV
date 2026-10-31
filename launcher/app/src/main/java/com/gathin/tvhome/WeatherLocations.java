@@ -15,6 +15,8 @@ final class WeatherLocations {
     private static final String PREFS = "weather_locations";
     static final WeatherCity NANKANG = new WeatherCity("赣州·南康", "weathercn:101240704", 25.832943528026, 114.71256136027);
     private static SharedPreferences prefs(Context context) { return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE); }
+    static boolean enabled(Context context) { return prefs(context).getBoolean("enabled", true); }
+    static void setEnabled(Context context, boolean enabled) { prefs(context).edit().putBoolean("enabled", enabled).commit(); }
     static synchronized String mode(Context context) {
         SharedPreferences prefs = prefs(context);
         if (!prefs.contains("mode")) {

@@ -3,7 +3,7 @@
 **HuaCCTV 是基于 [cleanyourtv](https://github.com/Gathin23/cleanyourtv) 二次修改的 Android TV 简洁桌面。** 原项目由 Gathin 开发，本仓库保留原作者版权与 MIT 许可，集中整理了针对小米电视的中文界面、遥控器操作和日常使用优化。
 
 - 原项目地址：**https://github.com/Gathin23/cleanyourtv**
-- 当前版本：**5.7**（versionCode 38）
+- 当前版本：**5.8**（versionCode 39）
 - 实机验证：小米电视 S55 / MiTV-MFTR0，Android 11 / API 30，1920×1080 输出
 - 本仓库包含桌面 Android 源码及二次修改；cleanyourtv 的完整清理工具、原始文档请参阅上游仓库。
 
@@ -94,9 +94,11 @@ adb shell am start -n com.bytv.launcher/com.gathin.tvhome.MainActivity
 
 系统统计权限用于读取本机网络统计，没有云端上传。APP 网速窗口中的速率由同一 UID 在两次采样间的字节差值除以实际时间得到，不是累计流量。Android 11 专用接口受系统实现影响，其他版本会显示不支持，不会伪造零速率。
 
-## 天气位置
+## 天气设置
 
-打开 **设置 → 天气位置**：
+打开 **设置 → 天气设置**：
+
+- **开启天气 / 关闭天气**：控制桌面天气显示，默认开启；关闭后停止定时刷新，保留已选城市，再次开启即可恢复。
 
 - **自动定位城市**：优先读取电视系统保存的位置，再解析天气城市；新安装默认启用。小米电视使用 `mitv_location` / `mitv_user_location`。没有系统位置时才使用公网 IP 估算，设置页会标明定位来源。IP 估算可能受 VPN、运营商出口及 IP 库误差影响，可改为手动选择。
 - **手动选择城市**：输入城市或区县名称，搜索并选择结果；中文、拼音或英文名称支持情况取决于小米搜索接口。

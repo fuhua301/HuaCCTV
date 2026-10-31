@@ -44,6 +44,9 @@ final class WeatherHeader {
     }
 
     void start() {
+        boolean enabled = WeatherLocations.enabled(context);
+        panel.setVisibility(enabled ? android.view.View.VISIBLE : android.view.View.GONE);
+        if (!enabled) { stop(); return; }
         active = true;
         panel.start();
         refresh();
@@ -63,7 +66,7 @@ final class WeatherHeader {
     }
 
     private void refresh() {
-        if (!active || closed || loading) return;
+        if (!active || closed || loading || !WeatherLocations.enabled(context)) return;
         ui.removeCallbacks(refresh);
         long age = System.currentTimeMillis() - cache.getLong("updated", 0);
         if (age >= 0 && age < REFRESH_MS && cache.contains("body") && cacheMatches()) {

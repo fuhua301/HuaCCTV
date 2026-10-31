@@ -84,7 +84,7 @@ public final class LauncherSettingsActivity extends Activity {
     }
     private void rootPage() {
         add("个性化", "布局、壁纸与动效  ›", () -> push("个性化", this::personal));
-        add("天气位置", weatherLocationLabel(), () -> push("天气位置", this::weatherLocationPage));
+        add("天气设置", weatherLocationLabel(), () -> push("天气设置", this::weatherLocationPage));
         add("开机启动", appLabel(), () -> push("开机启动 · 用户应用", this::startup));
         add("整理应用", "移动桌面图标  ›", () -> result(EXTRA_REORDER));
         add("投屏", "›", () -> open(SystemSettings.casting(this)));
@@ -95,11 +95,15 @@ public final class LauncherSettingsActivity extends Activity {
         }));
     }
     private String weatherLocationLabel() {
+        if (!WeatherLocations.enabled(this)) return "已关闭  ›";
         WeatherCity city = WeatherLocations.cached(this);
         return (WeatherLocations.AUTO.equals(WeatherLocations.mode(this)) ? "自动 · " : "手动 · ")
                 + (city == null ? "待定位" : city.name) + "  ›";
     }
     private void weatherLocationPage() {
+        boolean enabled = WeatherLocations.enabled(this);
+        add("开启天气", mark(enabled), () -> { WeatherLocations.setEnabled(this, true); changed(); refresh(); });
+        add("关闭天气", mark(!enabled), () -> { WeatherLocations.setEnabled(this, false); changed(); refresh(); });
         boolean automatic = WeatherLocations.AUTO.equals(WeatherLocations.mode(this));
         add("自动定位城市", mark(automatic), () -> { WeatherLocations.automatic(this); changed(); refresh(); });
         add("手动选择城市", !automatic ? "✓  ›" : "›", () -> push("搜索天气城市", this::weatherCitySearch));
