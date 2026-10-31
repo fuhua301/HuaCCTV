@@ -11,8 +11,8 @@ android {
         applicationId providers.gradleProperty('launcherApplicationId').getOrElse('com.bytv.launcher')
         minSdk 26
         targetSdk 34
-        versionCode 39
-        versionName '5.8'
+        versionCode 41
+        versionName '5.10'
     }
 
     // Twenty default wallpapers are bundled and seeded only once per filename.

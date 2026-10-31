@@ -106,7 +106,7 @@ final class FrostedPanel {
                 canvas.drawBitmap(image, null, new RectF(-position[0], -position[1],
                         screen.widthPixels - position[0], screen.heightPixels - position[1]), paint);
             } else { canvas.drawColor(0xFF404957); }
-            paint.setShader(new LinearGradient(0, 0, w, h, 0x668E949F, 0x99293342, Shader.TileMode.CLAMP));
+            paint.setShader(new LinearGradient(0, 0, w, h, 0x4DDDE3EB, 0x663E4858, Shader.TileMode.CLAMP));
             canvas.drawRect(0, 0, w, h, paint);
             canvas.restoreToCount(save);
             paint.setShader(null); paint.setStyle(Paint.Style.STROKE);

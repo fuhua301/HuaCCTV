@@ -3,11 +3,11 @@
 **HuaCCTV 是基于 [cleanyourtv](https://github.com/Gathin23/cleanyourtv) 二次修改的 Android TV 简洁桌面。** 原项目由 Gathin 开发，本仓库保留原作者版权与 MIT 许可，集中整理了针对小米电视的中文界面、遥控器操作和日常使用优化。
 
 - 原项目地址：**https://github.com/Gathin23/cleanyourtv**
-- 当前版本：**5.8**（versionCode 39）
+- 当前版本：**5.10**（versionCode 41）
 - 实机验证：小米电视 S55 / MiTV-MFTR0，Android 11 / API 30，1920×1080 输出
 - 本仓库包含桌面 Android 源码及二次修改；cleanyourtv 的完整清理工具、原始文档请参阅上游仓库。
 
-设置、输入源和 APP 网速窗口从右侧滑入/滑出；APP 长按菜单在图标上方放大弹出、缩小关闭。
+设置、输入源和 APP 网速窗口从右侧滑入/滑出；APP 长按菜单在图标上方放大弹出、缩小关闭。菜单采用更透明、偏白的毛玻璃叠色；仅显示首排时，将首排整体下移以隐藏下一排露边，各排间距保持一致，按向下键可继续浏览。
 
 ## 优化内容
 
