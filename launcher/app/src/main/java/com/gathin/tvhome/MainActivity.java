@@ -98,7 +98,7 @@ import java.util.Set;
 public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     private static final int LAUNCHER_SETTINGS_REQUEST = 42;
-    /** Sent by QuickSettingsActivity: open Launcher settings from here so Home rebuilds when they close. */
+    /** Sent by QuickSettingsActivity: open Launcher settings over Home for live updates. */
     static final String ACTION_LAUNCHER_SETTINGS = "com.gathin.tvhome.action.LAUNCHER_SETTINGS";
     /** The system input switcher, forwarded here by InputsRequestActivity while handle_view_inputs is on. */
     static final String ACTION_VIEW_INPUTS = "com.android.tv.action.VIEW_INPUTS";
@@ -113,8 +113,18 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
      */
     private static final long TIME_VALID_AFTER_MS = 1_735_689_600_000L;
     private String liveTvPkg;
-    /** Launcher settings' change count this Home was built with (see onResume). */
+    /** Last settings revision applied to the visible Home, including while its settings panel is open. */
     private long settingsRevision;
+    private Config liveConfig;
+    private SharedPreferences launcherPreferences;
+    private DockDecoration dockDecoration;
+    private View.OnLayoutChangeListener gridLayoutListener;
+    private final Runnable applySettings = this::applyLiveSettings;
+    private final SharedPreferences.OnSharedPreferenceChangeListener settingsListener = (prefs, key) -> {
+        if (Config.SETTINGS_REVISION_KEY.equals(key)) {
+            scheduleSettingsUpdate();
+        }
+    };
     /** Idle time on Home before ClockActivity; 0 is off (config.xml, home_idle_clock_minutes). */
     private long idleClockMs;
     private final Runnable showIdleClock = () -> startActivity(new Intent(this, ClockActivity.class));
@@ -366,6 +376,12 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             // signal level, so only it needs this minute's binder calls (about 7 ms on the UI thread).
             if (festive) updateWifiLabel();
             sky.update();
+            handler.postDelayed(this, MINUTE_MS);
+        }
+    };
+    /** Keep wallpaper rotation running behind translucent panels; stop only when Home is fully covered. */
+    private final Runnable wallpaperTick = new Runnable() {
+        @Override public void run() {
             wallpaperPlayer.update();
             handler.postDelayed(this, MINUTE_MS);
         }
@@ -379,6 +395,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         density = getResources().getDisplayMetrics().density;
         // config.xml, overlaid by config.json from a pushed theme (see Config and tools/theme.sh).
         Config cfg = Config.load(this);
+        liveConfig = cfg;
+        launcherPreferences = getSharedPreferences(Config.SETTINGS_NAME, MODE_PRIVATE);
+        launcherPreferences.registerOnSharedPreferenceChangeListener(settingsListener);
         appLibrarySelection = cfg.appLibrarySelection;
         // restore_key_services: after a force stop, put back the remote's accessibility helpers that Android took
         // off the list (needs WRITE_SECURE_SETTINGS, granted by build-and-install with RESTORE_KEY_SERVICES=1).
@@ -570,8 +589,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             public void onChildViewDetachedFromWindow(@NonNull View v) {
             }
         });
-        if (dockRow) grid.addItemDecoration(new DockDecoration(COLUMNS, density, cinematic, cfg.alwaysShowNames, cfg.dockOpacity, cfg.dockGlass, cfg.dockEvenPadding,
-                singleRow, cfg.dockBandAll, getResources().getBoolean(R.bool.dock_band)));
+        updateDockDecoration(cfg);
         if (cfg.fadeRows) TopFade.attach(grid, 48 * density);
         // Reduced motion: the tiles are simply there, with no entrance (reloadApps skips it there too).
         if (animations && !reducedMotion) {
@@ -587,29 +605,30 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
         // tvOS layout: push the dock row towards the bottom of the screen, leaving room for
         // rows_below_dock grid rows under it; the rest of the grid stays below until you press Down.
-        int rowsBelowDock = cfg.rowsBelowDock;
-        grid.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> {
+        gridLayoutListener = (v, l, t, r, b, ol, ot, or, ob) -> {
+            Config layoutConfig = liveConfig;
+            int rowsBelowDock = layoutConfig.rowsBelowDock;
             int h = b - t;
             // Item height follows the tile size, which follows the columns and the rows that must fit (AppAdapter.tileWidthPx).
             int inner = (r - l) - grid.getPaddingLeft() - grid.getPaddingRight();
-            int tileW = AppAdapter.tileWidthPx(inner, h, COLUMNS, rowsBelowDock, cfg.dockTitle, cfg.dockRow, density);
+            int tileW = AppAdapter.tileWidthPx(inner, h, COLUMNS, rowsBelowDock, layoutConfig.dockTitle, layoutConfig.dockRow, density);
             int itemH = AppAdapter.itemHeightPx(AppAdapter.tileHeightPx(tileW), density);
             int dockRow = itemH + (int) (AppAdapter.DOCK_EXTRA_DP * density);   // item height plus DockDecoration offsets
             int gridRows = itemH * rowsBelowDock;
             // Keep the hero below the header when the library is enabled on a short screen,
             // even when the theme requests an extra visible row below the dock.
-            int shelfClearance = cfg.appLibrary ? hero.getMeasuredHeight() + (int) (40 * density) : 0;
+            int shelfClearance = layoutConfig.appLibrary ? hero.getMeasuredHeight() + (int) (40 * density) : 0;
             int want = Math.max(shelfClearance, h - dockRow - gridRows - (int) (AppAdapter.BOTTOM_ROOM_DP * density));
             // Park the entire grid lower; keep the normal spacing between every row.
             if (MainActivity.this.dockRow && !singleRow && rowsBelowDock == 0) want += Math.round(30 * density);
             // Where the rows cannot fit even at the smallest tile (3 rows with the title on), the title keeps its
             // room above the dock and the last rows run off the bottom instead of the title drawing over the clock.
-            if (MainActivity.this.dockRow && cfg.dockTitle && rowsBelowDock > 0) want = Math.max(want, (int) (AppAdapter.TITLE_ROOM_DP * density));
+            if (MainActivity.this.dockRow && layoutConfig.dockTitle && rowsBelowDock > 0) want = Math.max(want, (int) (AppAdapter.TITLE_ROOM_DP * density));
             // No dock to push down: the grid starts at the top, with room for the first row's zoom and glass.
             if (!MainActivity.this.dockRow) want = (int) (AppAdapter.TOP_ROOM_DP * density);
             // A single row never shows the names under its tiles (the title above the row names the app), so the
             // 7dp gap and 22dp label item_app.xml keeps for them would only lift the row: sit it that much lower.
-            if (singleRow && !cfg.alwaysShowNames) want += (int) (29 * density);
+            if (singleRow && !layoutConfig.alwaysShowNames) want += (int) (29 * density);
             if (grid.getPaddingTop() != want) {
                 grid.setPadding(grid.getPaddingLeft(), want, grid.getPaddingRight(), grid.getPaddingBottom());
                 // A vertical grid parks the dock on the new padding line by scrolling (onTileFocused); a sideways
@@ -633,7 +652,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             // Cold start or column count > 4: the first focus can run before the grid has its final width or
             // padding, leaving the glass at the XML design size until a key is pressed.
             grid.post(this::refitGlass);
-        });
+        };
+        grid.addOnLayoutChangeListener(gridLayoutListener);
 
         // Keep the glass glued to its tile while the grid scrolls.
         grid.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -920,6 +940,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         updateClockVisibility();
         tileRefresh.onStart();
         weatherHeader.start();
+        wallpaperPlayer.start();
+        handler.postDelayed(wallpaperTick, MINUTE_MS);
     }
 
     @Override
@@ -932,13 +954,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             recreate();
             return;
         }
-        // Something changed in Launcher settings: rebuild with it, however the settings were left. Only Back
-        // delivered their RESULT_OK; Home (the remote's button) clears them off this task and the result comes
-        // back cancelled, so a new wallpaper or layout waited for the next process start.
-        if (Config.settingsChanged(settingsRevision, settingsRevision())) {
-            recreate();
-            return;
-        }
+        // Also catches changes made while Home was stopped, regardless of the settings activity result.
+        applyLiveSettings();
         restartIdleClock();
         promptsPaused = false;
         if (grid.getAdapter() == null) grid.setAdapter(adapter);   // dropped by onTrimMemory
@@ -987,14 +1004,78 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         }
     }
 
-    /** Launcher settings' change count (Config.SETTINGS_REVISION_KEY); onResume rebuilds Home when it moved. */
+    private void scheduleSettingsUpdate() {
+        handler.removeCallbacks(applySettings);
+        handler.post(applySettings);
+    }
+
+    private void updateDockDecoration(Config cfg) {
+        if (dockDecoration != null) grid.removeItemDecoration(dockDecoration);
+        dockDecoration = dockRow ? new DockDecoration(COLUMNS, density, cinematic, cfg.alwaysShowNames,
+                cfg.dockOpacity, cfg.dockGlass, cfg.dockEvenPadding, singleRow, cfg.dockBandAll,
+                getResources().getBoolean(R.bool.dock_band)) : null;
+        if (dockDecoration != null) grid.addItemDecoration(dockDecoration);
+    }
+
+    /** A translucent settings activity pauses Home without stopping it: update its views in place. */
+    private void applyLiveSettings() {
+        if (!started || isFinishing() || isDestroyed() || settingsRecreationPending
+                || !Config.settingsChanged(settingsRevision, settingsRevision())) return;
+        long revision = settingsRevision();
+        Config cfg = Config.load(this);
+        Config previous = liveConfig;
+        liveConfig = cfg;
+        openOnStartChoice = cfg.openOnStartChoice;
+        boolean tilesChanged = previous.columns != cfg.columns || previous.rowsBelowDock != cfg.rowsBelowDock
+                || previous.animations != cfg.animations || previous.advancedEffects != cfg.advancedEffects;
+        animations = cfg.animations;
+        advancedEffects = cfg.animations && cfg.advancedEffects;
+        if (tilesChanged) {
+            cancelPendingFocusScroll();
+            grid.stopScroll();
+            endReorder();
+            springX.cancel();
+            springY.cancel();
+            stopAmbientAnimation();
+            hero.animate().cancel();
+            ambient.animate().cancel();
+            heroArt.animate().cancel();
+            COLUMNS = cfg.columns;
+            ((GridLayoutManager) grid.getLayoutManager()).setSpanCount(singleRow ? 1 : COLUMNS);
+            grid.setLayoutAnimation(animations && !reducedMotion ? new LayoutAnimationController(
+                    AnimationUtils.loadAnimation(this, R.anim.tile_enter), 0.06f) : null);
+            AppAdapter oldAdapter = adapter;
+            adapter = new AppAdapter(this, this, COLUMNS, cfg);
+            Order savedOrder = Order.load(Order.file(this));
+            adapter.setSavedOrder(Order.ranks(savedOrder, dockApps), Order.docked(savedOrder, dockApps));
+            grid.setAdapter(adapter);
+            oldAdapter.clear();
+            grid.getRecycledViewPool().clear();
+            reloadApps(false);
+            gridLayoutListener.onLayoutChange(grid, grid.getLeft(), grid.getTop(), grid.getRight(), grid.getBottom(),
+                    grid.getLeft(), grid.getTop(), grid.getRight(), grid.getBottom());
+            grid.requestLayout();
+        }
+        if (tilesChanged || previous.dockOpacity != cfg.dockOpacity) updateDockDecoration(cfg);
+        // Compare the resolved file collection too, so LAN uploads and deletions apply immediately.
+        if (previous.wallpaperEnabled != cfg.wallpaperEnabled || !previous.wallpapers.equals(cfg.wallpapers)) {
+            wallpaperPlayer.close();
+            root.setBackgroundColor(cfg.backgroundColor);
+            wallpaperPlayer = new WallpaperPlayer(this, root, cfg);
+        }
+        wallpaperPlayer.start();
+        weatherHeader.settingsChanged();
+        settingsRevision = revision;
+    }
+
+    /** Launcher settings' change count, shared by TV controls and LAN wallpaper management. */
     private long settingsRevision() {
         return getSharedPreferences(Config.SETTINGS_NAME, MODE_PRIVATE).getLong(Config.SETTINGS_REVISION_KEY, 0);
     }
 
     /**
      * Only "Reorder tiles" in Launcher settings still answers with a result: Home rebuilds (the saved choices are
-     * reloaded) and then enters reorder mode. Every other change is picked up in onResume through the change count.
+     * reloaded) and then enters reorder mode. Other changes are applied by the live preference listener.
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -1150,7 +1231,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         handler.removeCallbacks(openAfterPowerOn);
         root.removeCallbacks(showIdleClock);
         endReorder();   // Home or another app while reordering keeps the order so far
-        wallpaperPlayer.stop();
         stopAmbientAnimation();
         hero.animate().cancel();
         ambient.animate().cancel();
@@ -1175,6 +1255,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         stopped = true;
         tileRefresh.onStop();
         weatherHeader.stop();
+        wallpaperPlayer.stop();
+        handler.removeCallbacks(wallpaperTick);
     }
 
     /**
@@ -1212,6 +1294,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        launcherPreferences.unregisterOnSharedPreferenceChangeListener(settingsListener);
+        handler.removeCallbacks(applySettings);
         if (weatherHeader != null) weatherHeader.close();
         unregisterReceiver(packageReceiver);
         wallpaperPlayer.close();

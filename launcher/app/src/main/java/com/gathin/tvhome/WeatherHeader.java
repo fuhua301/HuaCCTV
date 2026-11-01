@@ -30,6 +30,7 @@ final class WeatherHeader {
     private final Handler ui = new Handler(Looper.getMainLooper());
     private final ExecutorService worker = Executors.newSingleThreadExecutor();
     private boolean active, closed, loading;
+    private long settingsGeneration;
     private final Runnable refresh = this::refresh;
 
     WeatherHeader(WeatherPanelView panel) {
@@ -49,6 +50,7 @@ final class WeatherHeader {
         if (!enabled) { stop(); return; }
         active = true;
         panel.start();
+        render(false);
         refresh();
     }
 
@@ -56,6 +58,11 @@ final class WeatherHeader {
         active = false;
         panel.stop();
         ui.removeCallbacks(refresh);
+    }
+
+    void settingsChanged() {
+        settingsGeneration++;
+        start();
     }
 
     void close() {
@@ -75,6 +82,7 @@ final class WeatherHeader {
             return;
         }
         loading = true;
+        final long generation = settingsGeneration;
         worker.execute(() -> {
             boolean success = false;
             try {
@@ -99,6 +107,9 @@ final class WeatherHeader {
             ui.post(() -> {
                 loading = false;
                 if (closed || !active) return;
+                // A city changed during the request: retry now even if the old city's request failed.
+                if (generation != settingsGeneration) { refresh(); return; }
+                if (ok && !cacheMatches()) { refresh(); return; }
                 render(!ok);
                 ui.postDelayed(refresh, ok ? REFRESH_MS : RETRY_MS);
             });

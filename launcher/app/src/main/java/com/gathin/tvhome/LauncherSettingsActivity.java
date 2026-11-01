@@ -53,7 +53,7 @@ public final class LauncherSettingsActivity extends Activity {
         body = new LinearLayout(this); body.setOrientation(LinearLayout.VERTICAL); scroll.addView(body);
         int room = (int) (getResources().getDisplayMetrics().heightPixels / getResources().getDisplayMetrics().density) - 289;
         panel.addView(scroll, new LinearLayout.LayoutParams(-1, dp(Math.min(230, Math.max(100, room)))));
-        footer = ControlCenterUi.label(this, "简洁桌面 · 设置自动保存", 10);
+        footer = ControlCenterUi.label(this, "简洁桌面 · 自动保存，立即生效", 10);
         footer.setTextColor(0x99FFFFFF); footer.setPadding(dp(3), dp(10), 0, 0); panel.addView(footer);
         setContentView(panel);
         android.view.Window window = getWindow();
@@ -71,7 +71,7 @@ public final class LauncherSettingsActivity extends Activity {
         body.removeAllViews(); Page page = pages.get(pages.size() - 1);
         breadcrumb.setText((pages.size() > 1 ? "‹  " : "") + page.title);
         if (pages.size() > 1) add("‹ 返回上一级", "", this::back);
-        footer.setText("扫码管理壁纸".equals(page.title) ? "同一网络扫码管理 · 完成后电视按返回键" : "简洁桌面 · 设置自动保存");
+        footer.setText("扫码管理壁纸".equals(page.title) ? "同一网络扫码管理 · 修改立即生效" : "简洁桌面 · 自动保存，立即生效");
         page.build.run();
         if (body.getChildCount() > 0) body.getChildAt(Math.min(focus, body.getChildCount() - 1)).requestFocus();
     }
@@ -108,7 +108,7 @@ public final class LauncherSettingsActivity extends Activity {
         add("自动定位城市", mark(automatic), () -> { WeatherLocations.automatic(this); changed(); refresh(); });
         add("手动选择城市", !automatic ? "✓  ›" : "›", () -> push("搜索天气城市", this::weatherCitySearch));
         WeatherCity city = WeatherLocations.cached(this);
-        TextView hint = ControlCenterUi.label(this, "当前：" + (city == null ? "返回桌面后获取位置" : city.name)
+        TextView hint = ControlCenterUi.label(this, "当前：" + (city == null ? "正在获取位置" : city.name)
                 + "\n定位来源：" + WeatherLocations.source(this)
                 + "\n优先使用电视系统位置；系统未提供时才使用公网 IP 估算。地址有误时可手动选择。", 11);
         hint.setPadding(dp(8), dp(12), dp(8), dp(8)); hint.setTextColor(0xCCFFFFFF); body.addView(hint);
@@ -213,7 +213,7 @@ public final class LauncherSettingsActivity extends Activity {
             ImageView qr = new ImageView(this); qr.setImageBitmap(bitmap); qr.setContentDescription("壁纸管理二维码：" + url);
             LinearLayout.LayoutParams size = new LinearLayout.LayoutParams(dp(176), dp(176)); size.gravity = Gravity.CENTER_HORIZONTAL;
             body.addView(qr, size);
-            TextView hint = ControlCenterUi.label(this, "同一局域网的手机扫码添加、删除和选择壁纸。保持设置开启，完成后返回桌面生效。", 11);
+            TextView hint = ControlCenterUi.label(this, "同一局域网的手机扫码添加、删除和选择壁纸。保持设置开启，修改立即生效。", 11);
             hint.setPadding(dp(4), dp(8), dp(4), dp(8)); body.addView(hint);
             TextView link = ControlCenterUi.label(this, url, 9); link.setTextColor(0xBBFFFFFF); body.addView(link);
             add("刷新二维码", "", () -> { stopWallpaperServer(); refresh(); });

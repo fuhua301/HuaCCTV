@@ -177,6 +177,11 @@ final class WallpaperPlayer {
         active = false;
         closed = true;
         decoder.shutdownNow();
+        image.animate().cancel();
+        root.removeView(image);
+        if (caption != null) { caption.animate().cancel(); root.removeView(caption); }
+        image.setImageDrawable(null);
+        current = null;
     }
 
     void update() {
