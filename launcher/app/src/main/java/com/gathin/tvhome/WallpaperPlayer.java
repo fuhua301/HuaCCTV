@@ -32,6 +32,8 @@ import java.util.concurrent.Executors;
 /** Displays and rotates a theme's local wallpaper images while Home is visible. */
 final class WallpaperPlayer {
     private final FrameLayout root;
+    private final String videoChoice;
+    private final VideoWallpaper video;
     private final ImageView image;
     private final int backgroundColor;
     private final List<File> files;
@@ -78,6 +80,7 @@ final class WallpaperPlayer {
 
     WallpaperPlayer(Context context, FrameLayout root, Config config) {
         this.root = root;
+        videoChoice = VideoWallpaper.selection(context);
         backgroundColor = config.backgroundColor;
         files = new ArrayList<>(config.wallpapers);
         defaultMinutes = config.wallpaperRotationMinutes;
@@ -102,15 +105,19 @@ final class WallpaperPlayer {
         image = new ImageView(context);
         image.setScaleType(ImageView.ScaleType.CENTER_CROP);
         image.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-        names = config.wallpaperCaptions && config.wallpaperEnabled && !files.isEmpty()
+        boolean imagesEnabled = VideoWallpaperCatalog.IMAGES.equals(videoChoice) && config.wallpaperEnabled;
+        names = config.wallpaperCaptions && imagesEnabled && !files.isEmpty()
                 ? WallpaperCaptions.read(files.get(0).getParentFile()) : Collections.emptyMap();
         caption = names.isEmpty() ? null : makeCaption(context, root);
-        if (config.wallpaperEnabled && !files.isEmpty()) {
+        if (imagesEnabled && !files.isEmpty()) {
             root.addView(image, 0, new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             showFirst();
         }
+        video = VideoWallpaperCatalog.isVideo(videoChoice) ? new VideoWallpaper(context, root, videoChoice, config.wallpaperDim) : null;
     }
+
+    boolean selectionChanged(Context context) { return !videoChoice.equals(VideoWallpaper.selection(context)); }
 
     /**
      * The picture Home opens with is decoded right here, on the main thread, as the single wallpaper always was:
@@ -144,15 +151,18 @@ final class WallpaperPlayer {
 
     void start() {
         active = true;
+        if (video != null) video.start();
         update();
     }
 
     void stop() {
         active = false;
+        if (video != null) video.stop();
     }
 
     /** Drops the wallpaper texture when Home is hidden and Android asks the process to free memory. */
     void releaseForMemoryPressure() {
+        if (video != null) video.stop();
         if (current == null) return;
         image.setImageDrawable(null);
         // The renderer may still have a queued frame that references this hardware bitmap. Drop our references and
@@ -177,6 +187,7 @@ final class WallpaperPlayer {
         active = false;
         closed = true;
         decoder.shutdownNow();
+        if (video != null) video.close();
         image.animate().cancel();
         root.removeView(image);
         if (caption != null) { caption.animate().cancel(); root.removeView(caption); }
@@ -185,6 +196,8 @@ final class WallpaperPlayer {
     }
 
     void update() {
+        if (video != null) { if (active && !closed) video.update(interval()); return; }
+        if (!VideoWallpaperCatalog.IMAGES.equals(videoChoice)) return;
         if (!active || closed || loading || files.isEmpty()) return;
         String previous = preferences.getString("image", "");
         // A picture outside the time of day's group (the group changed) is replaced at once, not after the interval.

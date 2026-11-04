@@ -80,6 +80,7 @@ final class WallpaperWebStore implements WallpaperLanServer.Store {
         if (name == null) throw new IOException("请选择壁纸");
         if (name.isEmpty()) choices().edit().remove(Config.WALLPAPER_CHOICE_KEY).commit();
         else { if (!"none".equals(name)) find(name); choices().edit().putString(Config.WALLPAPER_CHOICE_KEY, name).commit(); }
+        choices().edit().putString(VideoWallpaper.KEY, VideoWallpaperCatalog.IMAGES).commit();
         changed();
     }
     @Override public synchronized void rotation(int minutes) throws Exception {

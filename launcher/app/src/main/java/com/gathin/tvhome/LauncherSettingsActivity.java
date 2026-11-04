@@ -171,7 +171,7 @@ public final class LauncherSettingsActivity extends Activity {
     }
     private void wallpapers() {
         add("手机扫码管理壁纸", "添加、删除与选择  ›", () -> push("扫码管理壁纸", this::wallpaperQr));
-        add("选择壁纸", "›", () -> push("选择壁纸", this::wallpaperChoices));
+        add("选择 4K 动态壁纸", "5 套 · 静音循环  ›", () -> push("选择 4K 动态壁纸", this::wallpaperChoices));
         int minutes = getSharedPreferences(WallpaperPlayer.KEY_PREFS, MODE_PRIVATE).getInt(WallpaperPlayer.KEY_MINUTES, 0);
         add("自动轮换", minutes == 0 ? "跟随主题  ›" : minutes + " 分钟  ›", () -> push("壁纸轮换间隔", () -> {
             for (int n = 0; n <= 10; n++) { final int value = n;
@@ -243,8 +243,37 @@ public final class LauncherSettingsActivity extends Activity {
     @Override protected void onDestroy() { weatherWorker.shutdownNow(); stopWallpaperServer(); super.onDestroy(); }
 
     private void wallpaperChoices() {
+        String selected = VideoWallpaper.selection(this);
+        add("五套动态壁纸轮换", mark(VideoWallpaperCatalog.ALL.equals(selected)),
+                () -> saveString(VideoWallpaper.KEY, VideoWallpaperCatalog.ALL));
+        for (int i = 0; i < VideoWallpaperCatalog.IDS.length; i++) {
+            final String id = VideoWallpaperCatalog.IDS[i];
+            add(VideoWallpaperCatalog.TITLES[i], mark(id.equals(selected)) + "  4K",
+                    () -> saveString(VideoWallpaper.KEY, id));
+        }
+        add("不显示壁纸", mark(VideoWallpaperCatalog.NONE.equals(selected)),
+                () -> saveString(VideoWallpaper.KEY, VideoWallpaperCatalog.NONE));
+        add("使用静态图片", "手机上传的图片  ›", () -> push("选择静态图片", this::imageWallpaperChoices));
+        TextView hint = ControlCenterUi.label(this, "5 套自然风景 · 3840×2160 输出 · 静音循环\n素材：Pexels / Motion Backgrounds；来源与作者见“视频素材来源”。", 10);
+        hint.setPadding(dp(8), dp(10), dp(8), dp(8)); body.addView(hint);
+        add("视频素材来源", "›", () -> push("视频素材来源", () -> {
+            String[] credits = {
+                    "珊瑚海洋：Adrien JACTA / JUN HO LEE / Tom Fisk · Pexels 31991094 / 35480156 / 4001923",
+                    "水草鱼缸：Motion Backgrounds · motionbgs.com/planted-aquarium",
+                    "伊瓜苏瀑布：Sergey Guk / Pexels · 33054007",
+                    "桃花纷飞：AI 底图＋本地花瓣与轻雾动效",
+                    "热带海岸：Hāyca / Pexels · 34306594",
+                    "各素材来源页面所列条款；已剪辑、静音并制作循环过渡。"};
+            for (String credit : credits) {
+                TextView text = ControlCenterUi.label(this, credit, 11);
+                text.setPadding(dp(6), dp(7), dp(6), dp(7)); body.addView(text);
+            }
+        }));
+    }
+    private void imageWallpaperChoices() {
         String current = choices.getString(Config.WALLPAPER_CHOICE_KEY, null);
-        add("跟随主题", mark(current == null), () -> { choices.edit().remove(Config.WALLPAPER_CHOICE_KEY).apply(); changed(); refresh(); });
+        add("跟随主题", mark(current == null), () -> { choices.edit().remove(Config.WALLPAPER_CHOICE_KEY)
+                .putString(VideoWallpaper.KEY, VideoWallpaperCatalog.IMAGES).apply(); changed(); refresh(); });
         add("不显示壁纸", mark("none".equals(current)), () -> saveString(Config.WALLPAPER_CHOICE_KEY, "none"));
         File dir = Config.dir(this);
         List<File> images = new ArrayList<>(WallpaperRotation.images(dir == null ? null : new File(dir, "wallpapers")));
@@ -284,13 +313,17 @@ public final class LauncherSettingsActivity extends Activity {
     }
     private void reset() {
         choices.edit().remove("columns").remove(Config.ROWS_BELOW_DOCK_KEY).remove("animations").remove("advanced_effects")
-                .remove(Config.WALLPAPER_CHOICE_KEY).remove(Config.DOCK_OPACITY_KEY).remove(OpenOnStart.KEY).commit();
+                .remove(Config.WALLPAPER_CHOICE_KEY).remove(VideoWallpaper.KEY).remove(Config.DOCK_OPACITY_KEY).remove(OpenOnStart.KEY).commit();
         getSharedPreferences(WallpaperPlayer.KEY_PREFS, MODE_PRIVATE).edit().remove(WallpaperPlayer.KEY_MINUTES).commit();
         OpenOnStart.skipThisBoot(this); changed(); home();
     }
     private void selectStartup(String pkg) { OpenOnStart.skipThisBoot(this); saveString(OpenOnStart.KEY, pkg); }
     private void saveInt(String key, int value) { choices.edit().putInt(key, value).apply(); changed(); refresh(); }
-    private void saveString(String key, String value) { choices.edit().putString(key, value).apply(); changed(); refresh(); }
+    private void saveString(String key, String value) {
+        SharedPreferences.Editor editor = choices.edit().putString(key, value);
+        if (Config.WALLPAPER_CHOICE_KEY.equals(key)) editor.putString(VideoWallpaper.KEY, VideoWallpaperCatalog.IMAGES);
+        editor.apply(); changed(); refresh();
+    }
     private void refresh() { render(Math.max(0, body.indexOfChild(getCurrentFocus()))); }
     private void changed() { setResult(RESULT_OK); choices.edit().putLong(Config.SETTINGS_REVISION_KEY,
             choices.getLong(Config.SETTINGS_REVISION_KEY, 0) + 1).apply(); }

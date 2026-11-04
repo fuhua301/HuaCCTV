@@ -449,7 +449,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         // The glow is one bitmap, so its alpha can be applied while drawing it. Otherwise every frame of
         // a fade renders it into a full-screen offscreen buffer first.
         ambient.forceHasOverlappingRendering(false);
-        ambientGlow = cfg.ambientGlow;
+        // Wallpaper colours stay natural regardless of which app icon has focus.
+        ambientGlow = false;
         appGlow = cfg.appGlow;
         if (!ambientGlow) ambient.setVisibility(View.GONE);
         heroName = findViewById(R.id.heroName);
@@ -1058,7 +1059,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         }
         if (tilesChanged || previous.dockOpacity != cfg.dockOpacity) updateDockDecoration(cfg);
         // Compare the resolved file collection too, so LAN uploads and deletions apply immediately.
-        if (previous.wallpaperEnabled != cfg.wallpaperEnabled || !previous.wallpapers.equals(cfg.wallpapers)) {
+        if (wallpaperPlayer.selectionChanged(this) || previous.wallpaperEnabled != cfg.wallpaperEnabled
+                || !previous.wallpapers.equals(cfg.wallpapers)) {
             wallpaperPlayer.close();
             root.setBackgroundColor(cfg.backgroundColor);
             wallpaperPlayer = new WallpaperPlayer(this, root, cfg);

@@ -1,0 +1,64 @@
+{
+  "tag": "v5.15",
+  "filename": "HuaCCTV-5.15-4K.apk",
+  "sha256": "729c06217c84458215903e54e4b3b40067390aeca6eb1bb1fda60e071ef48792",
+  "bytes": 175093036,
+  "parts": [
+    {
+      "sha": "cc8d5a1d9cd827115b1cd91262b3f92a484703ef",
+      "bytes": 12582912
+    },
+    {
+      "sha": "d10742308bd8cebaf332988a57b3e6bf969b732a",
+      "bytes": 12582912
+    },
+    {
+      "sha": "0232483f2773dd725ede76f90a7eb2c54a502a39",
+      "bytes": 12582912
+    },
+    {
+      "sha": "abd1ade36abfdafda70ebbc46b7f0906eb37c9ba",
+      "bytes": 12582912
+    },
+    {
+      "sha": "91c1efc05583f4249356ad652cf422fb16c19c8b",
+      "bytes": 12582912
+    },
+    {
+      "sha": "2c60a532d71d323d3986dcad4d63d707dffd0a81",
+      "bytes": 12582912
+    },
+    {
+      "sha": "ef5113a2f0984312af7a43f3bd0832590946195a",
+      "bytes": 12582912
+    },
+    {
+      "sha": "21309c20279ec4aecefc117f57e7d587e48f6cf1",
+      "bytes": 12582912
+    },
+    {
+      "sha": "63bd255f877843a97a3ad0ca4268dd9c89cc0f09",
+      "bytes": 12582912
+    },
+    {
+      "sha": "de38f10f8aa21bd24f17f33491f0c7a4fa72adc9",
+      "bytes": 12582912
+    },
+    {
+      "sha": "b51efebbc405a43811bc61100c9a438a72888f8c",
+      "bytes": 12582912
+    },
+    {
+      "sha": "ed4b10abe44224697c87c5eb5e4142b6e75f7169",
+      "bytes": 12582912
+    },
+    {
+      "sha": "5765d936cde973418b2b8f51dd838e930d848cbd",
+      "bytes": 12582912
+    },
+    {
+      "sha": "5e8745ada56d9ef7f2da7c4b394107aa99759aa6",
+      "bytes": 11515180
+    }
+  ]
+}

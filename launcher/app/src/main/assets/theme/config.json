@@ -4,6 +4,7 @@
   "wallpaper_order": "sequential",
   "dock_opacity": 70,
   "app_glow": true,
+  "ambient_glow": false,
   "stock_home_redirect": "com.mitv.tvhome",
   "restore_key_services": true,
   "key_filter": true,

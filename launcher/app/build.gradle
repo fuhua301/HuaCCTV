@@ -2,6 +2,41 @@ plugins {
     id 'com.android.application'
 }
 
+// Larger source videos are stored in numbered parts for reliable repository transfer.
+// A clean checkout reconstructs their exact bytes before assets are packaged.
+def generatedWallpaperAssets = layout.buildDirectory.dir('generated/wallpaperAssets')
+android.sourceSets.main.assets.srcDir(generatedWallpaperAssets)
+def assembleVideoWallpapers = tasks.register('assembleVideoWallpapers') {
+    inputs.files(fileTree('video-parts')).withPropertyName('videoParts')
+    inputs.file('src/main/assets/video-wallpapers/manifest.json')
+    outputs.dir(generatedWallpaperAssets)
+    outputs.upToDateWhen { false }
+    doLast {
+        def clips = new groovy.json.JsonSlurper().parse(file('src/main/assets/video-wallpapers/manifest.json')).clips
+        def groups = fileTree('video-parts').files.sort { it.name }.groupBy { it.name.replaceFirst(/\.part\d+$/, '') }
+        groups.each { name, parts ->
+            def target = new File(generatedWallpaperAssets.get().asFile, "video-wallpapers/${name}")
+            if (file("src/main/assets/video-wallpapers/${name}").exists()) {
+                target.delete()
+            } else {
+                target.parentFile.mkdirs()
+                target.withOutputStream { output -> parts.each { part -> part.withInputStream { input -> output << input } } }
+                def digest = java.security.MessageDigest.getInstance('SHA-256')
+                target.withInputStream { input ->
+                    byte[] buffer = new byte[65536]
+                    int count
+                    while ((count = input.read(buffer)) > 0) digest.update(buffer, 0, count)
+                }
+                def expected = clips.find { it.file == name }
+                if (expected == null || target.length() != expected.bytes || digest.digest().encodeHex().toString() != expected.sha256) {
+                    throw new GradleException("Video parts failed integrity check: ${name}")
+                }
+            }
+        }
+    }
+}
+tasks.configureEach { if (it.name == 'preBuild') it.dependsOn(assembleVideoWallpapers) }
+
 android {
     namespace 'com.gathin.tvhome'
     compileSdk 34
@@ -11,11 +46,14 @@ android {
         applicationId providers.gradleProperty('launcherApplicationId').getOrElse('com.bytv.launcher')
         minSdk 26
         targetSdk 34
-        versionCode 41
-        versionName '5.10'
+        versionCode 46
+        versionName '5.15'
     }
 
-    // Twenty default wallpapers are bundled and seeded only once per filename.
+    // Play the five 4K clips directly from APK offsets without copying them to external storage.
+    androidResources {
+        noCompress += ['mp4']
+    }
 
     buildTypes {
         release {

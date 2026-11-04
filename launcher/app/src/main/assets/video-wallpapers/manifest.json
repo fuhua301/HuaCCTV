@@ -1,0 +1,122 @@
+{
+  "version": 1,
+  "clips": [
+    {
+      "id": "ocean",
+      "title": "珊瑚海洋",
+      "author": "Adrien JACTA / JUN HO LEE / Tom Fisk",
+      "source_page": "https://www.pexels.com/video/vibrant-coral-reef-and-tropical-fish-in-clear-waters-31991094/",
+      "license": "Pexels License",
+      "license_url": "https://www.pexels.com/license/",
+      "file": "ocean.mp4",
+      "width": 3840,
+      "height": 2160,
+      "fps": 30,
+      "duration_seconds": 20,
+      "bytes": 46652328,
+      "sha256": "e1a74142ebba0cf6c23b90671327ae37233615d2e7ef202ca42a68530a528047",
+      "source_file": "multiple",
+      "source_start_seconds": 0,
+      "editing": "Native UHD, silent H.264 30fps; gentle wrap crossfade; no upscaling",
+      "sources": [
+        {
+          "author": "Adrien JACTA",
+          "source_page": "https://www.pexels.com/video/vibrant-coral-reef-and-tropical-fish-in-clear-waters-31991094/"
+        },
+        {
+          "author": "JUN HO LEE",
+          "source_page": "https://www.pexels.com/video/vibrant-coral-reef-with-school-of-fish-underwater-35480156/"
+        },
+        {
+          "author": "Tom Fisk",
+          "source_page": "https://www.pexels.com/video/clownfish-and-sea-anemone-4001923/"
+        }
+      ]
+    },
+    {
+      "id": "aquarium",
+      "title": "水草鱼缸",
+      "author": "Motion Backgrounds / Planted Aquarium",
+      "source_page": "https://motionbgs.com/planted-aquarium",
+      "license": "Source site terms; personal TV wallpaper use",
+      "license_url": "https://motionbgs.com/planted-aquarium",
+      "file": "aquarium.mp4",
+      "width": 3840,
+      "height": 2160,
+      "fps": 30,
+      "duration_seconds": 16,
+      "bytes": 37243063,
+      "sha256": "5a57f355f5d035946d028791b795a422728d305876dd069b402636a40661d599",
+      "source_file": "approved-aquarium-source.mp4",
+      "source_start_seconds": 0,
+      "editing": "Native UHD, silent H.264 30fps; gentle wrap crossfade; no upscaling",
+      "sources": [
+        {
+          "author": "Motion Backgrounds / Planted Aquarium",
+          "source_page": "https://motionbgs.com/planted-aquarium"
+        }
+      ]
+    },
+    {
+      "id": "waterfall",
+      "title": "伊瓜苏瀑布",
+      "author": "Sergey Guk",
+      "source_page": "https://www.pexels.com/video/stunning-aerial-view-of-iguazu-falls-33054007/",
+      "license": "Pexels License",
+      "license_url": "https://www.pexels.com/license/",
+      "file": "waterfall.mp4",
+      "width": 3840,
+      "height": 2160,
+      "fps": 30,
+      "duration_seconds": 18,
+      "bytes": 42056782,
+      "sha256": "c3e91b91e6ee5354e1ab80f9249eaba9c3b101202929d4e8749d0212fbf7a28d",
+      "source_file": "waterfall-source.mp4",
+      "source_start_seconds": 2,
+      "editing": "Native UHD, silent H.264 30fps; gentle wrap crossfade; no upscaling",
+      "sources": [
+        {
+          "author": "Sergey Guk",
+          "source_page": "https://www.pexels.com/video/stunning-aerial-view-of-iguazu-falls-33054007/"
+        }
+      ]
+    },
+    {
+      "id": "peach",
+      "title": "桃花纷飞",
+      "author": "AI generated with built-in imagegen; local procedural animation",
+      "source_page": null,
+      "license": "Generated project asset; source code license is separate",
+      "file": "peach.mp4",
+      "width": 3840,
+      "height": 2160,
+      "fps": 30,
+      "duration_seconds": 16,
+      "bytes": 19635205,
+      "sha256": "9d87387e6d8cb0370324f746404db6fccbe7168593e28b41e1b19645f4d1e8e3",
+      "source_file": "peach-generated-source.png",
+      "source_width": 1672,
+      "source_height": 941,
+      "upscaled": true,
+      "editing": "Generated still resized to UHD; layered curved petals with depth, tumble and cyclic wind; low-opacity moving valley mist; 16-second seamless procedural loop; silent H.264"
+    },
+    {
+      "id": "beach",
+      "title": "热带海岸",
+      "author": "Hāyca",
+      "source_page": "https://www.pexels.com/video/serene-tropical-beach-with-turquoise-waters-34306594/",
+      "license": "Pexels License",
+      "license_url": "https://www.pexels.com/license/",
+      "file": "beach.mp4",
+      "width": 3840,
+      "height": 2160,
+      "fps": 30,
+      "duration_seconds": 11,
+      "bytes": 26526099,
+      "sha256": "9fb90e4949c2f6e11afed45f8a1c1e0ddce7ba891e0305c62d42b83e251447dd",
+      "source_file": "beach-source.mp4",
+      "source_start_seconds": 0,
+      "editing": "Silent H.264 UHD; one-second wrap crossfade; no upscaling"
+    }
+  ]
+}
