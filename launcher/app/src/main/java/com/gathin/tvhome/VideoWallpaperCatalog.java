@@ -5,7 +5,7 @@ final class VideoWallpaperCatalog {
     static final String ALL = "all", IMAGES = "images", NONE = "none";
     static final String DEFAULT = "aquarium";
     static final String[] IDS = {"ocean", "aquarium", "waterfall", "peach", "beach"};
-    static final String[] TITLES = {"珊瑚海洋", "水草鱼缸", "伊瓜苏瀑布", "桃花纷飞", "热带海岸"};
+    static final String[] TITLES = {"海缸·一水海洋", "水草鱼缸", "经典景观", "桃花纷飞", "旅行窗景"};
     static int index(String id) {
         for (int i = 0; i < IDS.length; i++) if (IDS[i].equals(id)) return i;
         return -1;

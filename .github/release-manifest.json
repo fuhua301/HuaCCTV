@@ -1,64 +1,270 @@
 {
-  "tag": "v5.15",
-  "filename": "HuaCCTV-5.15-4K.apk",
-  "sha256": "729c06217c84458215903e54e4b3b40067390aeca6eb1bb1fda60e071ef48792",
-  "bytes": 175093036,
+  "tag": "v5.21",
+  "title": "HuaCCTV 5.21 · 旅行窗景与原生 HDR 海缸",
+  "filename": "HuaCCTV-5.21-4K.apk",
+  "sha256": "92f5f4a2d3e144b95b964d5a21a1fc433c045aae0712aca27a4a1f5937be3d7a",
+  "bytes": 752588076,
+  "notes": "龙鱼壁纸替换为小米原版 4K「旅行窗景」。海缸·一水海洋恢复原始 HEVC Main10 / BT.2020 PQ HDR 文件，通过硬件 SurfaceView 播放，移除导致失真的转码与调色，保留中性遮罩实现的 90% 亮度。\n\n五套壁纸：海缸·一水海洋、水草鱼缸、经典景观、桃花纷飞、旅行窗景。新安装默认水草鱼缸，升级保留有效选择。设置立即生效；没有新增或修改系统屏保。\n\n269 项单元测试通过；已安装小米电视实测，确认 HDR 图层及动态播放正常。发布的 APK 与电视上验证的安装包相同，沿用原安装签名，可用 SHA256SUMS.txt 校验。\n\n完整离线版：五套视频全部内置，APK 约 753 MB，安装后无需下载壁纸。体积主要来自原始 4K 视频，不包含备份或旧红龙素材。",
   "parts": [
     {
-      "sha": "cc8d5a1d9cd827115b1cd91262b3f92a484703ef",
+      "sha": "5b0c16405d8bf40118a6a269824682bbf5b49f7f",
+      "bytes": 729200
+    },
+    {
+      "sha": "27492d96411a1e276278fcbf362f496a48bbe89b",
+      "bytes": 37243063
+    },
+    {
+      "sha": "6838154811521df6a3958591088ef8efabaff8a5",
+      "bytes": 294005
+    },
+    {
+      "sha": "f8d00ef98e179f126fa957d4824eef393afb7db1",
       "bytes": 12582912
     },
     {
-      "sha": "d10742308bd8cebaf332988a57b3e6bf969b732a",
+      "sha": "0d8646b460a7d50976db4f8e8af7fd494bc4b837",
       "bytes": 12582912
     },
     {
-      "sha": "0232483f2773dd725ede76f90a7eb2c54a502a39",
+      "sha": "ad007c68956dcf882266b9ece18369ac2ba6c8e0",
       "bytes": 12582912
     },
     {
-      "sha": "abd1ade36abfdafda70ebbc46b7f0906eb37c9ba",
+      "sha": "529d89b4dcf859974f6b4642906c8b9af3f932aa",
       "bytes": 12582912
     },
     {
-      "sha": "91c1efc05583f4249356ad652cf422fb16c19c8b",
+      "sha": "99cda792b4f3712189e292a64ad32a26aad69113",
       "bytes": 12582912
     },
     {
-      "sha": "2c60a532d71d323d3986dcad4d63d707dffd0a81",
+      "sha": "f3214d847a403a638d25c6b41f6a11bfed6fe16d",
       "bytes": 12582912
     },
     {
-      "sha": "ef5113a2f0984312af7a43f3bd0832590946195a",
+      "sha": "e3eb2b0d6214a1eafb2f6e0636b5f03923282478",
       "bytes": 12582912
     },
     {
-      "sha": "21309c20279ec4aecefc117f57e7d587e48f6cf1",
+      "sha": "5d5547e64a63b432cd3972d9afeb2084ec6b7161",
       "bytes": 12582912
     },
     {
-      "sha": "63bd255f877843a97a3ad0ca4268dd9c89cc0f09",
+      "sha": "ce7a7325aa0f23d717bbc7343be4c161cf5077ec",
+      "bytes": 3203125
+    },
+    {
+      "sha": "2bec4c4c2037b562c024ad41fd0dba41c1f2cd88",
+      "bytes": 568031
+    },
+    {
+      "sha": "527135b5a2597b58f5765e759056fa303f46b256",
       "bytes": 12582912
     },
     {
-      "sha": "de38f10f8aa21bd24f17f33491f0c7a4fa72adc9",
+      "sha": "c2ae106d0d880edd2bbb0e65fbc52b6a191d66cc",
       "bytes": 12582912
     },
     {
-      "sha": "b51efebbc405a43811bc61100c9a438a72888f8c",
+      "sha": "89a2a6e2776df8ded6bfee552dbb3793104f60f5",
       "bytes": 12582912
     },
     {
-      "sha": "ed4b10abe44224697c87c5eb5e4142b6e75f7169",
+      "sha": "e9750631e7944104c5ce7f315ed789d4aed4b6bd",
       "bytes": 12582912
     },
     {
-      "sha": "5765d936cde973418b2b8f51dd838e930d848cbd",
+      "sha": "b6f7466148dfd0ee0209f24937481efa9b794afe",
       "bytes": 12582912
     },
     {
-      "sha": "5e8745ada56d9ef7f2da7c4b394107aa99759aa6",
-      "bytes": 11515180
+      "sha": "35ded4eec064618303a65aea8bb93661e1fe9cb9",
+      "bytes": 12582912
+    },
+    {
+      "sha": "90fbc28027ea7329d010434b432315ff414bc543",
+      "bytes": 12582912
+    },
+    {
+      "sha": "cda08963de62788fe8404097f74b700bb57b7f6c",
+      "bytes": 12582912
+    },
+    {
+      "sha": "15c240cb42538da76d64a96fcc1fe58a3a315b2d",
+      "bytes": 12582912
+    },
+    {
+      "sha": "68cb7fc6f05295e0810b0ef3c4fab5c4fb475aab",
+      "bytes": 12582912
+    },
+    {
+      "sha": "ea93412198f5c2cd7bbcf45c22ad15d9b9fafc80",
+      "bytes": 12582912
+    },
+    {
+      "sha": "59346bb4f4ccc7e657362b538abfab36e946f574",
+      "bytes": 12582912
+    },
+    {
+      "sha": "a42e88459aec53d0993e9ab68672a83252082674",
+      "bytes": 12582912
+    },
+    {
+      "sha": "53a89e033a4c039e90f2aef0e1cba9a844aa8afa",
+      "bytes": 12582912
+    },
+    {
+      "sha": "c6066b4a6acfc6b8691ad3f561270154815174df",
+      "bytes": 12582912
+    },
+    {
+      "sha": "4f8274b75d95e68b31a885839ce60d30751f4335",
+      "bytes": 12582912
+    },
+    {
+      "sha": "dc86ae2f2252cdde8a970964896ec60961b80f50",
+      "bytes": 12582912
+    },
+    {
+      "sha": "2abb4958085a2b2c207f1af940d4c912895c913a",
+      "bytes": 12582912
+    },
+    {
+      "sha": "60c8f90048ff88b75221050579dc7763f28f7d49",
+      "bytes": 12582912
+    },
+    {
+      "sha": "bf3f5cb2217e3b68a1ab2833d877db21b694ee5d",
+      "bytes": 12582912
+    },
+    {
+      "sha": "bfc59dfd76489bd68028fbcc204e51360071cb65",
+      "bytes": 12582912
+    },
+    {
+      "sha": "b149fcf0968bdaad650d2b9eb62bd9aedfab75a4",
+      "bytes": 12582912
+    },
+    {
+      "sha": "274f410417fca684a6025053bcf9d7d7758f15c6",
+      "bytes": 12582912
+    },
+    {
+      "sha": "8429aa8912008897de8c69c2afd96216c5b0d008",
+      "bytes": 12582912
+    },
+    {
+      "sha": "1d179f9f05ffd001df2a2016142eb8d4bafedb5a",
+      "bytes": 12582912
+    },
+    {
+      "sha": "d9cef693e73e74dc9130a387129b0a8184858b7f",
+      "bytes": 12582912
+    },
+    {
+      "sha": "26752148603ef8e69f85bcccdab1948fb998573e",
+      "bytes": 12582912
+    },
+    {
+      "sha": "d576b03582bb0e82b35d2ec454632b918c691159",
+      "bytes": 12582912
+    },
+    {
+      "sha": "dffb5ec1d6ef693c58b3a42180091187603ae73a",
+      "bytes": 12582912
+    },
+    {
+      "sha": "4dd3835660deaed200f2a0bf1f2b8cc97140b5c9",
+      "bytes": 12582912
+    },
+    {
+      "sha": "3d9a232ab95e68881684f0bd320196634beb68a9",
+      "bytes": 12582912
+    },
+    {
+      "sha": "83a42394e593b606f4ef7c772a4a8d2a1fa3fedd",
+      "bytes": 12582912
+    },
+    {
+      "sha": "8e82cec34a323690be02f9008ad1161d39c3140f",
+      "bytes": 12582912
+    },
+    {
+      "sha": "b92a3a733574c67c3abdc17a496894cfdbb06a9a",
+      "bytes": 12582912
+    },
+    {
+      "sha": "71d8e4e539771d1acc2ecd621bb44ddadc3a2a7d",
+      "bytes": 12582912
+    },
+    {
+      "sha": "01c238e8920fde2501519b3d9b28dc18326207f7",
+      "bytes": 12582912
+    },
+    {
+      "sha": "1be013ab6a6f7cb9266a6757d79d5af0decb2e27",
+      "bytes": 4843009
+    },
+    {
+      "sha": "4df617800e53d54726b809f29a8814b1081d656b",
+      "bytes": 519875
+    },
+    {
+      "sha": "e5b54a98e7a0fdb2aea2393f907ee5fbbb702c97",
+      "bytes": 19635205
+    },
+    {
+      "sha": "1830ec4febd7e1715cf081c29680c34f65c5814e",
+      "bytes": 328227
+    },
+    {
+      "sha": "3601f6ce2083d26111315b1a0d263e9d9358f65a",
+      "bytes": 12582912
+    },
+    {
+      "sha": "25c4b81a99cbbce56b3835a9a471a438337fd9f8",
+      "bytes": 12582912
+    },
+    {
+      "sha": "c8d5ae257eb57aca79fcc0efb7553b1838aee6f8",
+      "bytes": 12582912
+    },
+    {
+      "sha": "fbe47a48dd8b0911d121d5264b845e5acd942614",
+      "bytes": 12582912
+    },
+    {
+      "sha": "145f1d10659b81c97e60621977b3f590e5561428",
+      "bytes": 12582912
+    },
+    {
+      "sha": "819794c77b6d6b9cbd5f7b2e45fe4c1211f2c2c7",
+      "bytes": 12582912
+    },
+    {
+      "sha": "ed95284c88f7d5ae73ac0f9333ea2b2a1d95a386",
+      "bytes": 12582912
+    },
+    {
+      "sha": "11a1160aa4cf182720df90fbcb27f419e6086742",
+      "bytes": 12582912
+    },
+    {
+      "sha": "dc24b0636102d52892a913e32d09df62f6c981a0",
+      "bytes": 12582912
+    },
+    {
+      "sha": "c5a64ff104535958072bb548900401e09c32b8c2",
+      "bytes": 12582912
+    },
+    {
+      "sha": "9fcaad8b1e19dc63223bcc987c9df8acca153a2e",
+      "bytes": 5401045
+    },
+    {
+      "sha": "c4e15ab081d6b02736747ecbbefdc252cb4c0573",
+      "bytes": 346043
     }
   ]
 }

@@ -40,8 +40,8 @@ jobs:
           manifest=.github/release-manifest.json
           tag=$(jq -r .tag "$manifest")
           apk=$(jq -r .filename "$manifest")
-          printf '%s\n' '新安装默认固定播放水草鱼缸；用户手动设置的有效选择会保留。' '' '包含五套静音循环视频：珊瑚海洋、水草鱼缸、伊瓜苏瀑布、桃花纷飞、热带海岸。设置即时生效，壁纸不随应用图标变色。桃花为 AI 底图加本地动效，输出 3840×2160。' '' '269 项 JVM 测试通过。APK 沿用已验证的原安装签名；签名私钥不在仓库中。下载后可用 SHA256SUMS.txt 校验。' > release-output/notes.md
+          jq -r .notes "$manifest" > release-output/notes.md
           if ! gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release create "$tag" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title 'HuaCCTV 5.15 · 默认水草鱼缸' --notes-file release-output/notes.md
+            gh release create "$tag" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "$(jq -r .title "$manifest")" --notes-file release-output/notes.md
           fi
           gh release upload "$tag" "release-output/$apk" release-output/SHA256SUMS.txt --repo "$GITHUB_REPOSITORY" --clobber

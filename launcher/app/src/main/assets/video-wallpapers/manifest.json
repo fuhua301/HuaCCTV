@@ -3,35 +3,32 @@
   "clips": [
     {
       "id": "ocean",
-      "title": "珊瑚海洋",
-      "author": "Adrien JACTA / JUN HO LEE / Tom Fisk",
-      "source_page": "https://www.pexels.com/video/vibrant-coral-reef-and-tropical-fish-in-clear-waters-31991094/",
-      "license": "Pexels License",
-      "license_url": "https://www.pexels.com/license/",
+      "title": "海缸·一水海洋",
+      "author": "Xiaomi TV screensaver / original rights holders",
+      "source_page": "http://tvscreensaver.cdn.pandora.xiaomi.com/screensaver/resources/5cb9c3a88a349e5f13c572cfbe0ce0d7.mp4",
+      "license": "Xiaomi TV screensaver assets; rights retained by original owners",
+      "license_url": "http://tvscreensaver.cdn.pandora.xiaomi.com/screensaver/resources/5cb9c3a88a349e5f13c572cfbe0ce0d7.mp4",
       "file": "ocean.mp4",
       "width": 3840,
       "height": 2160,
-      "fps": 30,
-      "duration_seconds": 20,
-      "bytes": 46652328,
-      "sha256": "e1a74142ebba0cf6c23b90671327ae37233615d2e7ef202ca42a68530a528047",
-      "source_file": "multiple",
+      "fps": 59.94005994,
+      "duration_seconds": 140.807333,
+      "bytes": 457827841,
+      "sha256": "7929c01c3e8a3cc39690370e8683355201faeb2f9f6de334da736151f618da33",
+      "source_file": "Xiaomi ID_FISH_2",
       "source_start_seconds": 0,
-      "editing": "Native UHD, silent H.264 30fps; gentle wrap crossfade; no upscaling",
+      "editing": "Byte-identical original Xiaomi HEVC Main10 source; no trimming, transcoding, tone mapping, gamma or saturation edits. Decoded to a hardware SurfaceView layer.",
       "sources": [
         {
-          "author": "Adrien JACTA",
-          "source_page": "https://www.pexels.com/video/vibrant-coral-reef-and-tropical-fish-in-clear-waters-31991094/"
-        },
-        {
-          "author": "JUN HO LEE",
-          "source_page": "https://www.pexels.com/video/vibrant-coral-reef-with-school-of-fish-underwater-35480156/"
-        },
-        {
-          "author": "Tom Fisk",
-          "source_page": "https://www.pexels.com/video/clownfish-and-sea-anemone-4001923/"
+          "author": "Xiaomi TV screensaver / original rights holders",
+          "source_page": "http://tvscreensaver.cdn.pandora.xiaomi.com/screensaver/resources/5cb9c3a88a349e5f13c572cfbe0ce0d7.mp4",
+          "description": "海缸 一水海洋 只有1个视频"
         }
-      ]
+      ],
+      "color_space": "BT.2020 HDR10/PQ",
+      "hdr_to_sdr": false,
+      "native_source": true,
+      "display_brightness": 0.9
     },
     {
       "id": "aquarium",
@@ -59,25 +56,76 @@
     },
     {
       "id": "waterfall",
-      "title": "伊瓜苏瀑布",
-      "author": "Sergey Guk",
-      "source_page": "https://www.pexels.com/video/stunning-aerial-view-of-iguazu-falls-33054007/",
-      "license": "Pexels License",
-      "license_url": "https://www.pexels.com/license/",
+      "title": "经典景观",
+      "author": "Xiaomi TV screensaver / original rights holders",
+      "source_page": "http://tvscreensaver.cdn.pandora.xiaomi.com/screensaver/resources/d0d1e4b8527b1e49b75a7232c51c45e9.mp4",
+      "license": "Xiaomi TV screensaver assets; rights retained by original owners",
+      "license_url": "http://tvscreensaver.cdn.pandora.xiaomi.com/screensaver/resources/d0d1e4b8527b1e49b75a7232c51c45e9.mp4",
       "file": "waterfall.mp4",
       "width": 3840,
       "height": 2160,
       "fps": 30,
-      "duration_seconds": 18,
-      "bytes": 42056782,
-      "sha256": "c3e91b91e6ee5354e1ab80f9249eaba9c3b101202929d4e8749d0212fbf7a28d",
-      "source_file": "waterfall-source.mp4",
-      "source_start_seconds": 2,
-      "editing": "Native UHD, silent H.264 30fps; gentle wrap crossfade; no upscaling",
+      "duration_seconds": 55,
+      "bytes": 131230165,
+      "sha256": "945fb9ea2348b4afeda38a7b7dd1bc62d1dce7e712ba26c2b0d9b62afa1062e7",
+      "source_file": "Xiaomi ID_CLASSIC_LANDSCAPE",
+      "source_start_seconds": 3,
+      "editing": "Native UHD sources, silent H.264 High 5.1 30fps; eleven 5-second landscape excerpts in a single collection",
       "sources": [
         {
-          "author": "Sergey Guk",
-          "source_page": "https://www.pexels.com/video/stunning-aerial-view-of-iguazu-falls-33054007/"
+          "author": "Xiaomi TV screensaver / original rights holders",
+          "source_page": "http://tvscreensaver.cdn.pandora.xiaomi.com/screensaver/resources/d0d1e4b8527b1e49b75a7232c51c45e9.mp4",
+          "description": "经典景观1--运河"
+        },
+        {
+          "author": "Xiaomi TV screensaver / original rights holders",
+          "source_page": "http://tvscreensaver.cdn.pandora.xiaomi.com/screensaver/resources/182e4996bf77f6187dcc69050e666818.mp4",
+          "description": "经典景观2--两条鲸鱼"
+        },
+        {
+          "author": "Xiaomi TV screensaver / original rights holders",
+          "source_page": "http://tvscreensaver.cdn.pandora.xiaomi.com/screensaver/resources/02ec2a769a007c6975289be7c4c2e7d7.mp4",
+          "description": "经典景观3--冰川"
+        },
+        {
+          "author": "Xiaomi TV screensaver / original rights holders",
+          "source_page": "http://tvscreensaver.cdn.pandora.xiaomi.com/screensaver/resources/29c0998373e19a2dda39b18a510f254c.mp4",
+          "description": "经典景观4---平看城市高楼"
+        },
+        {
+          "author": "Xiaomi TV screensaver / original rights holders",
+          "source_page": "http://tvscreensaver.cdn.pandora.xiaomi.com/screensaver/resources/137c9041017884ceca41305e34f5c5cc.mp4",
+          "description": "经典景观5--海洋鱼群"
+        },
+        {
+          "author": "Xiaomi TV screensaver / original rights holders",
+          "source_page": "http://tvscreensaver.cdn.pandora.xiaomi.com/screensaver/resources/57715238f498cef08500f4a794e707ce.mp4",
+          "description": "经典景观6--深谷瀑布"
+        },
+        {
+          "author": "Xiaomi TV screensaver / original rights holders",
+          "source_page": "http://tvscreensaver.cdn.pandora.xiaomi.com/screensaver/resources/0f0b3d9b275db2168999f74b623b090f.mp4",
+          "description": "经典景观7--俯瞰城市高楼夜景"
+        },
+        {
+          "author": "Xiaomi TV screensaver / original rights holders",
+          "source_page": "http://tvscreensaver.cdn.pandora.xiaomi.com/screensaver/resources/9ea6612fbe8f707335024e7be3d033e2.mp4",
+          "description": "经典景观8--红色海洋"
+        },
+        {
+          "author": "Xiaomi TV screensaver / original rights holders",
+          "source_page": "http://tvscreensaver.cdn.pandora.xiaomi.com/screensaver/resources/040263def655bd21b8f9dc1b8408f073.mp4",
+          "description": "经典景观9--珠穆朗玛峰"
+        },
+        {
+          "author": "Xiaomi TV screensaver / original rights holders",
+          "source_page": "http://tvscreensaver.cdn.pandora.xiaomi.com/screensaver/resources/72873b810bcddc8944eb3785d862f705.mp4",
+          "description": "经典景观10--海岸别墅群"
+        },
+        {
+          "author": "Xiaomi TV screensaver / original rights holders",
+          "source_page": "http://tvscreensaver.cdn.pandora.xiaomi.com/screensaver/resources/e8b0de04e4291e9692783aa45efd8afd.mp4",
+          "description": "经典景观11--峰顶火山口"
         }
       ]
     },
@@ -102,21 +150,30 @@
     },
     {
       "id": "beach",
-      "title": "热带海岸",
-      "author": "Hāyca",
-      "source_page": "https://www.pexels.com/video/serene-tropical-beach-with-turquoise-waters-34306594/",
-      "license": "Pexels License",
-      "license_url": "https://www.pexels.com/license/",
+      "title": "旅行窗景",
+      "author": "Xiaomi TV screensaver / original rights holders",
+      "source_page": "http://tvscreensaver.cdn.pandora.xiaomi.com/screensaver/resources/15a57294f3930f075565235dae84b0c3.mp4",
+      "license": "Xiaomi TV screensaver assets; rights retained by original owners",
+      "license_url": "http://tvscreensaver.cdn.pandora.xiaomi.com/screensaver/resources/15a57294f3930f075565235dae84b0c3.mp4",
       "file": "beach.mp4",
       "width": 3840,
       "height": 2160,
       "fps": 30,
-      "duration_seconds": 11,
-      "bytes": 26526099,
-      "sha256": "9fb90e4949c2f6e11afed45f8a1c1e0ddce7ba891e0305c62d42b83e251447dd",
-      "source_file": "beach-source.mp4",
+      "duration_seconds": 31.033333,
+      "bytes": 103866421,
+      "sha256": "98fa5993fc36a9e8392d320e756647939f9548662592a43ca3ac4901bebad91e",
+      "source_file": "Xiaomi ID_WINDOW_3 original",
       "source_start_seconds": 0,
-      "editing": "Silent H.264 UHD; one-second wrap crossfade; no upscaling"
+      "editing": "Byte-identical original Xiaomi HEVC Main10 source; no trimming, transcoding, tone mapping, gamma or saturation edits. Decoded to a hardware SurfaceView layer.",
+      "sources": [
+        {
+          "author": "Xiaomi TV screensaver / original rights holders",
+          "source_page": "http://tvscreensaver.cdn.pandora.xiaomi.com/screensaver/resources/15a57294f3930f075565235dae84b0c3.mp4"
+        }
+      ],
+      "color_space": "BT.709 SDR / 10-bit",
+      "hdr_to_sdr": false,
+      "native_source": true
     }
   ]
 }

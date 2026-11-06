@@ -7,6 +7,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.PixelCopy;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.SurfaceView;
 import java.util.function.Consumer;
 
 /** Blurs a downsampled copy of our own window; works on Android 11 without privileged screen capture. */
@@ -43,14 +45,32 @@ final class FrostedPanel {
         if (decor.getWidth() < 1 || decor.getHeight() < 1) { callback.accept(null); return; }
         Bitmap bitmap = Bitmap.createBitmap(Math.max(1, decor.getWidth() / 6), Math.max(1, decor.getHeight() / 6), Bitmap.Config.ARGB_8888);
         try {
-            PixelCopy.request(activity.getWindow(), bitmap, result -> {
+            PixelCopy.OnPixelCopyFinishedListener copied = result -> {
                 if (result != PixelCopy.SUCCESS) { bitmap.recycle(); callback.accept(null); return; }
                 new Thread(() -> {
                     blur(bitmap, 8);
                     decor.post(() -> callback.accept(bitmap));
                 }, "PanelBlur").start();
-            }, new Handler(Looper.getMainLooper()));
+            };
+            SurfaceView video = findVideoSurface(decor);
+            Handler main = new Handler(Looper.getMainLooper());
+            if (video != null) PixelCopy.request(video, bitmap, copied, main);
+            else PixelCopy.request(activity.getWindow(), bitmap, copied, main);
         } catch (RuntimeException unavailable) { bitmap.recycle(); callback.accept(null); }
+    }
+
+    private static SurfaceView findVideoSurface(View view) {
+        if (view instanceof SurfaceView && VideoWallpaper.SURFACE_TAG.equals(view.getTag())
+                && view.getVisibility() == View.VISIBLE && ((SurfaceView) view).getHolder().getSurface().isValid())
+            return (SurfaceView) view;
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                SurfaceView found = findVideoSurface(group.getChildAt(i));
+                if (found != null) return found;
+            }
+        }
+        return null;
     }
 
     private static void blur(Bitmap image, int radius) {

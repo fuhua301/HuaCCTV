@@ -254,15 +254,15 @@ public final class LauncherSettingsActivity extends Activity {
         add("不显示壁纸", mark(VideoWallpaperCatalog.NONE.equals(selected)),
                 () -> saveString(VideoWallpaper.KEY, VideoWallpaperCatalog.NONE));
         add("使用静态图片", "手机上传的图片  ›", () -> push("选择静态图片", this::imageWallpaperChoices));
-        TextView hint = ControlCenterUi.label(this, "5 套自然风景 · 3840×2160 输出 · 静音循环\n素材：Pexels / Motion Backgrounds；来源与作者见“视频素材来源”。", 10);
+        TextView hint = ControlCenterUi.label(this, "5 套动态壁纸 · 3840×2160 输出 · 静音循环\n素材：小米电视屏保 / Motion Backgrounds / AI；来源与作者见“视频素材来源”。", 10);
         hint.setPadding(dp(8), dp(10), dp(8), dp(8)); body.addView(hint);
         add("视频素材来源", "›", () -> push("视频素材来源", () -> {
             String[] credits = {
-                    "珊瑚海洋：Adrien JACTA / JUN HO LEE / Tom Fisk · Pexels 31991094 / 35480156 / 4001923",
+                    "海缸·一水海洋：小米电视屏保 ID_FISH_2",
                     "水草鱼缸：Motion Backgrounds · motionbgs.com/planted-aquarium",
-                    "伊瓜苏瀑布：Sergey Guk / Pexels · 33054007",
+                    "经典景观：小米电视屏保 ID_CLASSIC_LANDSCAPE · 11 段景观合集",
                     "桃花纷飞：AI 底图＋本地花瓣与轻雾动效",
-                    "热带海岸：Hāyca / Pexels · 34306594",
+                    "旅行窗景：小米电视屏保 ID_WINDOW_3 · 原始视频",
                     "各素材来源页面所列条款；已剪辑、静音并制作循环过渡。"};
             for (String credit : credits) {
                 TextView text = ControlCenterUi.label(this, credit, 11);

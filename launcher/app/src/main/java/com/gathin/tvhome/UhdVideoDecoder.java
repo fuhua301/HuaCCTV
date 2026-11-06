@@ -37,6 +37,7 @@ final class UhdVideoDecoder {
         if (format == null) throw new IllegalArgumentException("No video track");
         codec = MediaCodec.createDecoderByType(format.getString(MediaFormat.KEY_MIME));
         codec.configure(format, surface, null, 0); codec.start();
+        android.util.Log.i("TvHome.VideoWallpaper", "Native colour format: " + format);
         android.util.Log.i("TvHome.VideoWallpaper", "Decoder " + id + " " + format.getInteger(MediaFormat.KEY_WIDTH) + "x" + format.getInteger(MediaFormat.KEY_HEIGHT));
         worker.post(this::pump);
     }

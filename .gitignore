@@ -10,3 +10,8 @@
 *.log
 .DS_Store
 Thumbs.db
+
+# Reconstructed from video-parts; keep full local sources out of Git.
+launcher/app/src/main/assets/video-wallpapers/ocean.mp4
+launcher/app/src/main/assets/video-wallpapers/waterfall.mp4
+launcher/app/src/main/assets/video-wallpapers/beach.mp4
